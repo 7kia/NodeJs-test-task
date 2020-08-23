@@ -1,4 +1,4 @@
-import express from 'express'
+import express from 'express';
 import {router as chatRouter} from './chat-router';
 const app = express();
 
