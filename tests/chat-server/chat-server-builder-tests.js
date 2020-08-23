@@ -5,7 +5,7 @@ import {DomainCore} from '../../chat-server/domain-core/domain-core'
 describe("Класс ChatServerBuilder. " +
     "Создает все компоненты контейнера \"Чат-сервер\"", () => {
     /** @type {ChatServerBuilder} */
-    let chatServerBuilder  = new ChatServerBuilder();
+    const chatServerBuilder  = new ChatServerBuilder();
     it("Создает DomainCore.", () => {
         /** @type {DomainCore} */
         const domainCore = chatServerBuilder.createDomainCore();
