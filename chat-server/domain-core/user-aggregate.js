@@ -1,3 +1,3 @@
-class UserAggregate {
+export class UserAggregate {
 
 }

@@ -1,3 +1,3 @@
-class ChatAggregate {
+export class ChatAggregate {
 
 }
