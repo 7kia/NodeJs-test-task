@@ -13,7 +13,7 @@ describe("Класс ServerApiController. Генерирует REST-ответы
      */
     function deleteUser(username) {
         chai.request(SERVER_ADDRESS)
-            .post("users/delete")
+            .get("users/delete")
             .type("json")
             .send({
                 "username": username
@@ -84,7 +84,7 @@ describe("Класс ServerApiController. Генерирует REST-ответы
         addUser(USER_NAME);
         it("Если такой пользователь существует, то он удаляется.", (done) => {
             chai.request(SERVER_ADDRESS)
-                .post("users/delete")
+                .get("users/delete")
                 .type("json")
                 .send({
                     "username": USER_NAME
@@ -97,7 +97,7 @@ describe("Класс ServerApiController. Генерирует REST-ответы
         it("Если пользователя с указанным именем не существует, то возвращается " +
             "сообщение об отсутствии пользователя.", (done) => {
             chai.request(SERVER_ADDRESS)
-                .post("users/delete")
+                .get("users/delete")
                 .type("json")
                 .send({
                     "username": USER_NAME
@@ -139,7 +139,7 @@ describe("Класс ServerApiController. Генерирует REST-ответы
      */
     function deleteChat(chatId) {
         chai.request(SERVER_ADDRESS)
-            .post("chats/add")
+            .get("chats/delete")
             .type("json")
             .send({
                 "id": chatId
@@ -463,7 +463,7 @@ describe("Класс ServerApiController. Генерирует REST-ответы
          */
         function deleteMessage(id) {
             chai.request(SERVER_ADDRESS)
-                .post("chats/messages/delete")
+                .get("chats/messages/delete")
                 .type("json")
                 .send({
                     "id": id

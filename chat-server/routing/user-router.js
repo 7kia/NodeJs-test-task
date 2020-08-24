@@ -1,12 +1,18 @@
 import express from 'express';
+import {ChatServerBuilderDirector} from "./chat-server-builder-director";
+
+/** @type {ChatServerBuilderDirector} */
+const chatServerBuilderDirector = new ChatServerBuilderDirector();
+/** @type {UserRouterController} */
+let controller = chatServerBuilderDirector.createUserRouterController();
 let router = express.Router();
 
-router.get('/add', function(req, res) {
-    res.send('User Add tests');
+router.post('/add', function(req, res) {
+    controller.add(req, res);
 });
 
 router.get('/delete', function(req, res) {
-    res.send('User Delete tests');
+    controller.delete(req, res);
 });
 
 export {router};
