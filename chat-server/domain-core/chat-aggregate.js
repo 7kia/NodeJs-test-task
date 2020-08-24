@@ -1,10 +1,13 @@
 export class ChatAggregate {
     /**
      *
-     * @param {IChatDatabaseManager} chatDatabaseManager
+     * @param {ChatRepository} chatRepository
+     * @param {MessageRepository} messageRepository
      */
-    constructor(chatDatabaseManager) {
-        /** @private {IChatDatabaseManager} */
-        this.chatDatabaseManager = chatDatabaseManager;
+    constructor(chatRepository, messageRepository) {
+        /** @private {ChatRepository} */
+        this.chatRepository = chatRepository;
+        /** @private {MessageRepository} */
+        this.messageRepository = messageRepository;
     }
 }

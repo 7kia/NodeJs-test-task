@@ -14,13 +14,16 @@ export class DomainCoreBuilder {
      * @return {UserAggregate}
      */
     createUserAggregate() {
-        return new UserAggregate(this.databaseManager.getUserDatabaseManager());
+        return new UserAggregate(this.databaseManager.getUserRepository());
     }
     /**
      * @return {ChatAggregate}
      */
     createChatAggregate() {
-        return new ChatAggregate(this.databaseManager.getChatDatabaseManager());
+        return new ChatAggregate(
+            this.databaseManager.getChatRepository(),
+            this.databaseManager.getMessageRepository()
+        );
     }
     /**
      *

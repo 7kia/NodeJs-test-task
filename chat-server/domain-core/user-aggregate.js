@@ -1,10 +1,25 @@
 export class UserAggregate {
     /**
      *
-     * @param {IUserDatabaseManager} userDatabaseManager
+     * @param {UserRepository} userDatabaseManager
      */
     constructor(userDatabaseManager) {
-        /** @private {IUserDatabaseManager} */
+        /** @private {UserRepository} */
         this.userDatabaseManager = userDatabaseManager;
     }
+
+    /**
+     * @param {Object} json
+     */
+    checkInputData(json) {
+        throw new Error("Not implement");
+    }
+
+    /**
+     * @param {Object} json
+     */
+    addUser(json) {
+        throw new Error("Not implement");
+    }
+
 }

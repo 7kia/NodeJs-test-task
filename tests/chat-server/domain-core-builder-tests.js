@@ -19,6 +19,7 @@ describe("Класс DomainCoreBuilder.", () => {
             const manager = builder.createChatAggregate();
             expect(manager).is.not.null;
             expect(manager).have.property("chatDatabaseManager");
+            expect(manager).have.property("messageRepository");
         })
     })
     it("Собирает DomainCore из UserAggregate и ChatAggregate", () => {

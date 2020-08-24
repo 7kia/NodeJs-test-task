@@ -1,23 +1,42 @@
-import {UserDatabaseManager} from "./user-database-manager";
-import {ChatDatabaseManager} from "./chat-database-manager";
+import {UserRepository} from "./repositories/user-repository";
+import {ChatRepository} from "./repositories/chat-repository";
+import {Client} from "pg";
+import {MessageRepository} from "./repositories/message-repository";
 
 export class DatabaseManager {
     constructor() {
-        /** @private {IUserDatabaseManager} */
-        this.userDatabaseManager = new UserDatabaseManager();
-        /** @private {IChatDatabaseManager} */
-        this.chatDatabaseManager = new ChatDatabaseManager();
+        /** @private {Client} */
+        this.connection = new Client({
+            host: "localhost",
+            port: 5432,
+            database: "ChatServer",
+            user: "postgres",
+            password: "postgres",
+        })
+        this.connection.connect();
+        /** @private {UserRepository} */
+        this.userRepository = new UserRepository(this.connection);
+        /** @private {ChatRepository} */
+        this.chatRepository = new ChatRepository(this.connection);
+        /** @private {MessageRepository} */
+        this.messageRepository = new MessageRepository(this.connection);
     }
     /**
-     * @return {IUserDatabaseManager}
+     * @return {UserRepository}
      */
-    getUserDatabaseManager() {
-        return this.userDatabaseManager;
+    getUserRepository() {
+        return this.userRepository;
     }
     /**
-     * @return {IChatDatabaseManager}
+     * @return {ChatRepository}
      */
-    getChatDatabaseManager() {
-        return this.chatDatabaseManager;
+    getChatRepository() {
+        return this.chatRepository;
+    }
+    /**
+     * @return {MessageRepository}
+     */
+    getMessageRepository() {
+        return this.messageRepository;
     }
 }

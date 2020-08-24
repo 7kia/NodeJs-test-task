@@ -1,3 +1,5 @@
+import {PromiseWrap} from "../promise-wrap";
+
 export class UserRouterController {
     /**
      *
@@ -12,8 +14,13 @@ export class UserRouterController {
      * @param {Request} req
      * @param {Response} res
      */
-    add(req, res) {
-        res.send('User Add tests');
+    async add(req, res) {
+        return await PromiseWrap.asyncRouteSendWrap(async function() {
+            this.userAggregate.checkInputData(req.body);
+            /** @type {User} */
+            const newUser = await this.userAggregate.addUser(req.body);
+            return newUser.asJson();
+        }, true);
     }
 
     /**
