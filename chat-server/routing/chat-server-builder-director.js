@@ -1,10 +1,18 @@
+import {ChatServerBuilder} from "./chat-server-builder";
+
 export class ChatServerBuilderDirector {
+    constructor() {
+        /** @private {ChatServerBuilder} */
+        this.builder = new ChatServerBuilder();
+        /** @private {DomainCore} */
+        this.domainCore = this.builder.createDomainCore();
+    }
     /**
      *
      * @returns {UserRouterController}
      */
     createUserRouterController() {
-        return null;
+        return this.builder.createUserRouterController(this.domainCore.getUserAggregate());
     }
 
     /**
@@ -12,6 +20,6 @@ export class ChatServerBuilderDirector {
      * @returns {ChatRouterController}
      */
     createChatRouterController() {
-        return null;
+        return this.builder.createChatRouterController(this.domainCore.getChatAggregate());
     }
 }

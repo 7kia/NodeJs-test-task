@@ -12,15 +12,19 @@ describe("Класс ChatServerBuilder. " +
         expect(domainCore).is.not.null;
     })
     it("Создает UserRouterController, внутри которого лежит domainCore.userAggregate.", () => {
+        /** @type {DomainCore} */
+        const domainCore = chatServerBuilder.createDomainCore();
         /** @type {UserRouterController} */
-        const controller = chatServerBuilder.createUserRouterController();
+        const controller = chatServerBuilder.createUserRouterController(domainCore.getUserAggregate());
         expect(controller).is.not.null;
-        expect(controller.getUserAggregate()).is.not.null;
+        expect(controller).to.have.property("userAggregate");
     })
     it("Создает ChatRouterController, внутри которого лежит domainCore.chatAggregate.", () => {
+        /** @type {DomainCore} */
+        const domainCore = chatServerBuilder.createDomainCore();
         /** @type {ChatRouterController} */
-        const controller = chatServerBuilder.createChatRouterController();
+        const controller = chatServerBuilder.createChatRouterController(domainCore.getChatAggregate());
         expect(controller).is.not.null;
-        expect(controller.getChatAggregate()).is.not.null;
+        expect(controller).to.have.property("chatAggregate");
     })
 })

@@ -1,9 +1,9 @@
 export class ChatRouterController {
     /**
      *
-     * @returns {ChatAggregate}
+     * @param {ChatAggregate} chatAggregate
      */
-    getChatAggregate() {
-        return null;
+    constructor(chatAggregate) {
+        this.chatAggregate = chatAggregate;
     }
 }

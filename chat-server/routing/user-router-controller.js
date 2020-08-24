@@ -1,9 +1,10 @@
 export class UserRouterController {
     /**
      *
-     * @returns {UserAggregate}
+     * @param {UserAggregate} userAggregate
      */
-    getUserAggregate() {
-        return null;
+    constructor(userAggregate) {
+        /** @private {UserAggregate} */
+        this.userAggregate = userAggregate;
     }
 }

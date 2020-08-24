@@ -1,22 +1,35 @@
+import {DomainCoreBuilderDirector} from "../domain-core/domain-core-builder-director";
+import {DatabaseManager} from "../database/database-manager";
+import {UserRouterController} from "./user-router-controller";
+import {ChatRouterController} from "./chat-router-controller";
+
 export class ChatServerBuilder {
+    constructor() {
+        /** @private {DatabaseManager} */
+        this.databaseManager = new DatabaseManager();
+        /** @private {DomainCoreBuilderDirector} */
+        this.domainCoreBuiderDirector = new DomainCoreBuilderDirector(this.databaseManager);
+    }
     /**
      * @return {DomainCore}
      */
     createDomainCore() {
-        return null;
+        return this.domainCoreBuiderDirector.createDomainCore();
     }
 
     /**
+     * @param {UserAggregate} userAggregate
      * @return {UserRouterController}
      */
-    createUserRouterController() {
-        return null;
+    createUserRouterController(userAggregate) {
+        return new UserRouterController(userAggregate);
     }
 
     /**
+     * @param {ChatAggregate} chatAggregate
      * @return {ChatRouterController}
      */
-    createChatRouterController() {
-        return null;
+    createChatRouterController(chatAggregate) {
+        return new ChatRouterController(chatAggregate);
     }
 }
