@@ -1,15 +1,4 @@
 export class PromiseWrap {
-    // static async usualPromise(func) {
-    //     return new Promise((resolve, reject) => {
-    //         try {
-    //             resolve(func());
-    //         } catch (exception) {
-    //             console.log(exception);
-    //             reject(exception);
-    //         }
-    //     });
-    // }
-
     /**
      *
      * @param func
