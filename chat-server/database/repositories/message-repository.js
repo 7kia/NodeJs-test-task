@@ -1,5 +1,5 @@
 import {PromiseWrap} from "../../promise-wrap";
-import {Message} from "../Entity/Message";
+import {Message} from "../entity/Message";
 import {Repository} from "./Repository";
 
 export class MessageRepository extends Repository {

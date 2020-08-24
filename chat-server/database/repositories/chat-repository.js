@@ -1,5 +1,5 @@
 import {PromiseWrap} from "../../promise-wrap";
-import {Chat} from "../Entity/Chat";
+import {Chat} from "../entity/Chat";
 import {Repository} from "./Repository";
 
 export class ChatRepository extends Repository {
