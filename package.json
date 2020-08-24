@@ -7,11 +7,6 @@
     "superagent": "^6.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.11.4",
-    "@babel/node": "^7.10.5",
-    "@babel/preset-env": "^7.11.0",
-    "babel-cli": "^6.26.0",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "mocha": "^8.1.1"
