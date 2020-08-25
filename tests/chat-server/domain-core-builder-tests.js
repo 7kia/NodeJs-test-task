@@ -5,34 +5,89 @@ import {DatabaseManager} from "../../chat-server/database/database-manager";
 describe("Класс DomainCoreBuilder.", () => {
     /** @type {DomainCoreBuilder} */
     const builder = new DomainCoreBuilder(new DatabaseManager());
-    describe("Создает UserAggregate.", () => {
-        it("UserAggregate содержит в себе UserDatabaseManager", () => {
-            /** @type {UserAggregate} */
-            const manager = builder.createUserAggregate();
-            expect(manager).is.not.null;
-            expect(manager).have.property("userDatabaseManager");
+    describe("Создает Rules.", () => {
+        describe("Создает UserRequestRules.", () => {
+            it("UserRequestRules содержит в себе UserDatabaseManager", () => {
+                /** @type {UserRequestRules} */
+                const rules = builder.createUserRules();
+                expect(rules).is.not.null;
+                expect(rules).have.property("userRepository");
+            })
+        })
+        describe("Создает ChatRequestRules.", () => {
+            it("ChatAggregate содержит в себе ChatRepository и MessageRepository", () => {
+                /** @type {ChatRequestRules} */
+                const rules = builder.createChatRules();
+                expect(rules).is.not.null;
+                expect(rules).have.property("chatRepository");
+                expect(rules).have.property("messageRepository");
+            })
+        })
+        it("UserRequestRules содержит в себе UserRequestRules и ChatRequestRules", () => {
+            /** @type {UserRequestRules} */
+            const userRules = builder.createUserRules();
+            /** @type {ChatRequestRules} */
+            const chatRules = builder.createChatRules();
+            /** @type {Rules} */
+            const rules = builder.createRules(userRules, chatRules);
+
+            expect(rules).is.not.null;
+            expect(rules).have.property("userRequestRules");
+            expect(rules).have.property("chatRequestRules");
         })
     })
-    describe("Создает ChatAggregate.", () => {
-        it("ChatAggregate содержит в себе ChatDatabaseManager", () => {
-            /** @type {ChatAggregate} */
-            const manager = builder.createChatAggregate();
-            expect(manager).is.not.null;
-            expect(manager).have.property("chatDatabaseManager");
-            expect(manager).have.property("messageRepository");
+    describe("Создает Strategies.", () => {
+        describe("Создает UserRequestStrategies.", () => {
+            it("UserRequestStrategies содержит в себе UserRepository", () => {
+                /** @type {UserRequestStrategies} */
+                const strategies = builder.createUserStrategies();
+                expect(strategies).is.not.null;
+                expect(strategies).have.property("userRepository");
+            })
+        })
+        describe("Создает ChatRequestStrategies.", () => {
+            it("ChatRequestStrategies содержит в себе ChatRepository и MessageRepository", () => {
+                /** @type {ChatRequestStrategies} */
+                const strategies = builder.createChatStrategies();
+                expect(strategies).is.not.null;
+                expect(strategies).have.property("chatRepository");
+                expect(strategies).have.property("messageRepository");
+            })
+        })
+        it("Strategies содержит в себе UserRequestStrategies и ChatRequestStrategies", () => {
+            /** @type {UserRequestStrategies} */
+            const userStrategies = builder.createUserStrategies();
+            /** @type {ChatRequestStrategies} */
+            const chatStrategies = builder.createChatStrategies();
+            /** @type {Strategies} */
+            const strategies = builder.createStrategies(userStrategies, chatStrategies);
+
+            expect(strategies).is.not.null;
+            expect(strategies).have.property("userRequestStrategies");
+            expect(strategies).have.property("chatRequestStrategies");
         })
     })
-    it("Собирает DomainCore из UserAggregate и ChatAggregate", () => {
-        /** @type {UserAggregate} */
-        const userAggregate = builder.createUserAggregate();
-        /** @type {ChatAggregate} */
-        const chatAggregate = builder.createChatAggregate();
+    it("Собирает DomainCore из Rules и Strategies", () => {
+        /** @type {UserRequestStrategies} */
+        const userStrategies = builder.createUserStrategies();
+        /** @type {ChatRequestStrategies} */
+        const chatStrategies = builder.createChatStrategies();
+        /** @type {Strategies} */
+        const strategies = builder.createStrategies(userStrategies, chatStrategies);
+
+        /** @type {UserRequestRules} */
+        const userRules = builder.createUserRules();
+        /** @type {ChatRequestRules} */
+        const chatRules = builder.createChatRules();
+        /** @type {Rules} */
+        const rules = builder.createRules(userRules, chatRules);
+
         /** @type {DomainCore} */
-        const core = builder.buildDomainCore(userAggregate, chatAggregate);
+        const core = builder.buildDomainCore(rules, strategies);
 
         expect(core).is.not.null;
-        expect(core).have.property("userAggregate");
-        expect(core).have.property("chatAggregate");
+        expect(core).have.property("rules");
+        expect(core).have.property("strategies");
     })
 
 })

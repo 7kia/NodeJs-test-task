@@ -1,9 +1,12 @@
-export class Chat {
+import {ConvertToJson} from "./convert-to-json";
+
+export class Chat extends ConvertToJson{
     /**
      * *
      * @param {Object} data
      */
     constructor(data) {
+        super();
         /** @public {number} */
         this.id = data.id;
         /** @public {string} */

@@ -2,12 +2,14 @@ import {PromiseWrap} from "../promise-wrap";
 
 export class UserRouterController {
     /**
-     *
-     * @param {UserAggregate} userAggregate
+     * @param {UserRequestRules} rules
+     * @param {UserRequestStrategies} strategies
      */
-    constructor(userAggregate) {
-        /** @private {UserAggregate} */
-        this.userAggregate = userAggregate;
+    constructor(rules, strategies) {
+        /** @private {UserRequestRules} */
+        this.rules = rules;
+        /** @private {UserRequestStrategies} */
+        this.strategies = strategies;
     }
 
     /**
@@ -15,10 +17,11 @@ export class UserRouterController {
      * @param {Response} res
      */
     async add(req, res) {
+        let self = this;
         return await PromiseWrap.asyncRouteSendWrap(async function() {
-            this.userAggregate.checkInputData(req.body);
+            self.rules.checkNewUserData(req.body);
             /** @type {User} */
-            const newUser = await this.userAggregate.addUser(req.body);
+            const newUser = await self.strategies.addUser(req.body);
             return newUser.asJson();
         }, true);
     }
@@ -27,7 +30,11 @@ export class UserRouterController {
      * @param {Request} req
      * @param {Response} res
      */
-    delete(req, res) {
-        res.send('User Delete tests');
+    async delete(req, res) {
+        let self = this;
+        return await PromiseWrap.asyncRouteSendWrap(async function() {
+            self.rules.checkDeleteUserData(req.body);
+            await self.strategies.deleteUser(req.body);
+        }, true);
     }
 }

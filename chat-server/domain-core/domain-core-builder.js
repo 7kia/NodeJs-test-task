@@ -1,6 +1,10 @@
-import {UserAggregate} from "./user-aggregate";
-import {ChatAggregate} from "./chat-aggregate";
+import {UserRequestStrategies} from "./user-request-strategies";
+import {ChatRequestStrategies} from "./chat-request-strategies";
 import {DomainCore} from "./domain-core";
+import {UserRequestRules} from "./user-request-rules";
+import {ChatRequestRules} from "./chat-request-rules";
+import {Strategies} from "./strategies";
+import {Rules} from "./rules";
 
 export class DomainCoreBuilder {
     /**
@@ -10,28 +14,67 @@ export class DomainCoreBuilder {
     constructor(databaseManager) {
         this.databaseManager = databaseManager;
     }
+
     /**
-     * @return {UserAggregate}
+     * @return {UserRequestRules}
      */
-    createUserAggregate() {
-        return new UserAggregate(this.databaseManager.getUserRepository());
+    createUserRules() {
+        return new UserRequestRules(this.databaseManager.getUserRepository());
     }
+
     /**
-     * @return {ChatAggregate}
+     * @return {ChatRequestRules}
      */
-    createChatAggregate() {
-        return new ChatAggregate(
+    createChatRules() {
+        return new ChatRequestRules(
             this.databaseManager.getChatRepository(),
             this.databaseManager.getMessageRepository()
         );
     }
+
+
+    /**
+     * @param {UserRequestRules} userRules
+     * @param {ChatRequestRules} chatRules
+     * @return {Rules}
+     */
+    createRules(userRules, chatRules) {
+        return new Rules(userRules, chatRules);
+    }
+
+    /**
+     * @return {UserRequestStrategies}
+     */
+    createUserStrategies() {
+        return new UserRequestStrategies(this.databaseManager.getUserRepository());
+    }
+
+    /**
+     * @return {ChatRequestStrategies}
+     */
+    createChatStrategies() {
+        return new ChatRequestStrategies(
+            this.databaseManager.getChatRepository(),
+            this.databaseManager.getMessageRepository()
+        );
+    }
+
+    /**
+     * @param {UserRequestStrategies} userStrategies
+     * @param {ChatRequestStrategies} chatStrategies
+     * @return {Strategies}
+     */
+    createStrategies(userStrategies, chatStrategies) {
+        return new Strategies(userStrategies, chatStrategies);
+    }
+
     /**
      *
-     * @param {UserAggregate} userAggregate
-     * @param {ChatAggregate} chatAggregate
+     * @param {Rules} rules
+     * @param {Strategies} strategies
      * @return {DomainCore}
      */
-    buildDomainCore(userAggregate, chatAggregate) {
-        return new DomainCore(userAggregate, chatAggregate);
+    buildDomainCore(rules, strategies) {
+        return new DomainCore(rules, strategies);
     }
 }

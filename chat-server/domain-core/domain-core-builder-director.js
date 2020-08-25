@@ -17,10 +17,20 @@ export class DomainCoreBuilderDirector {
      * @returns {DomainCore}
      */
     createDomainCore() {
-        /** @type {UserAggregate} */
-        const userAggregate = this.builder.createUserAggregate();
-        /** @type {ChatAggregate} */
-        const chatAggregate = this.builder.createChatAggregate();
-        return this.builder.buildDomainCore(userAggregate, chatAggregate);
+        /** @type {UserRequestStrategies} */
+        const userStrategies = this.builder.createUserStrategies();
+        /** @type {ChatRequestStrategies} */
+        const chatStrategies = this.builder.createChatStrategies();
+        /** @type {Strategies} */
+        const strategies = this.builder.createStrategies(userStrategies, chatStrategies);
+
+        /** @type {UserRequestRules} */
+        const userRules = this.builder.createUserRules();
+        /** @type {ChatRequestRules} */
+        const chatRules = this.builder.createChatRules();
+        /** @type {Rules} */
+        const rules = this.builder.createRules(userRules, chatRules);
+
+        return this.builder.buildDomainCore(rules, strategies);
     }
 }

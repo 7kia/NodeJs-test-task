@@ -1,4 +1,4 @@
-import {User} from "../entity/User";
+import {User} from "../entity/user";
 import {PromiseWrap} from "../../promise-wrap";
 import {Repository} from "./Repository";
 

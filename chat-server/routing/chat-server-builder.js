@@ -18,18 +18,20 @@ export class ChatServerBuilder {
     }
 
     /**
-     * @param {UserAggregate} userAggregate
+     * @param {UserRequestRules} rules
+     * @param {UserRequestStrategies} strategies
      * @return {UserRouterController}
      */
-    createUserRouterController(userAggregate) {
-        return new UserRouterController(userAggregate);
+    createUserRouterController(rules, strategies) {
+        return new UserRouterController(rules, strategies);
     }
 
     /**
-     * @param {ChatAggregate} chatAggregate
+     * @param {ChatRequestRules} rules
+     * @param {ChatRequestStrategies} strategies
      * @return {ChatRouterController}
      */
-    createChatRouterController(chatAggregate) {
-        return new ChatRouterController(chatAggregate);
+    createChatRouterController(rules, strategies) {
+        return new ChatRouterController(rules, strategies);
     }
 }

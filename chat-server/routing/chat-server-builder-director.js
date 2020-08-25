@@ -12,7 +12,10 @@ export class ChatServerBuilderDirector {
      * @returns {UserRouterController}
      */
     createUserRouterController() {
-        return this.builder.createUserRouterController(this.domainCore.getUserAggregate());
+        return this.builder.createUserRouterController(
+            this.domainCore.getUserRequestRules(),
+            this.domainCore.getUserRequestStrategies()
+        );
     }
 
     /**
@@ -20,6 +23,9 @@ export class ChatServerBuilderDirector {
      * @returns {ChatRouterController}
      */
     createChatRouterController() {
-        return this.builder.createChatRouterController(this.domainCore.getChatAggregate());
+        return this.builder.createChatRouterController(
+            this.domainCore.getChatRequestRules().
+            this.domainCore.getChatRequestStrategies()
+        );
     }
 }

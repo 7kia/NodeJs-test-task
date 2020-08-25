@@ -1,31 +1,47 @@
-import {UserAggregate} from "./user-aggregate";
-import {ChatAggregate} from "./chat-aggregate";
+import {UserRequestStrategies} from "./user-request-strategies";
+import {ChatRequestStrategies} from "./chat-request-strategies";
 
 export class DomainCore {
     /**
      *
-     * @param {UserAggregate} userAggregate
-     * @param {ChatAggregate} chatAggregate
+     * @param {Rules} rules
+     * @param {Strategies} strategies
+     */
+    constructor(rules, strategies) {
+        /** @private {Rules} */
+        this.rules = rules;
+        /** @Strategies {Strategies} */
+        this.strategies = strategies;
+    }
 
+    /**
+     *
+     * @returns {UserRequestStrategies}
      */
-    constructor(userAggregate, chatAggregate) {
-        /** @private {UserAggregate} */
-        this.userAggregate = userAggregate;
-        /** @private {ChatAggregate} */
-        this.chatAggregate = chatAggregate;
+    getUserRequestStrategies() {
+        return this.strategies.userRequestStrategies;
+    }
+
+    /**
+     *
+     * @returns {ChatRequestStrategies}
+     */
+    getChatRequestStrategies() {
+        return this.strategies.chatRequestStrategies;
     }
     /**
      *
-     * @returns {UserAggregate}
+     * @returns {UserRequestRules}
      */
-    getUserAggregate() {
-        return this.userAggregate;
+    getUserRequestRules() {
+        return this.rules.userRequestRules;
     }
+
     /**
      *
-     * @returns {ChatAggregate}
+     * @returns {ChatRequestRules}
      */
-    getChatAggregate() {
-        return this.chatAggregate;
+    getChatRequestRules() {
+        return this.rules.chatRequestRules;
     }
 }

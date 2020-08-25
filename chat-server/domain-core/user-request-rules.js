@@ -1,25 +1,24 @@
-export class UserAggregate {
+export class UserRequestRules {
     /**
      *
      * @param {UserRepository} userDatabaseManager
      */
     constructor(userDatabaseManager) {
         /** @private {UserRepository} */
-        this.userDatabaseManager = userDatabaseManager;
+        this.userRepository = userDatabaseManager;
     }
 
     /**
      * @param {Object} json
      */
-    checkInputData(json) {
+    checkNewUserData(json) {
         throw new Error("Not implement");
     }
 
     /**
      * @param {Object} json
      */
-    addUser(json) {
+    checkDeleteUserData(json) {
         throw new Error("Not implement");
     }
-
 }

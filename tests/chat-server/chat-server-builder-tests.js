@@ -11,20 +11,29 @@ describe("Класс ChatServerBuilder. " +
         const domainCore = chatServerBuilder.createDomainCore();
         expect(domainCore).is.not.null;
     })
-    it("Создает UserRouterController, внутри которого лежит domainCore.userAggregate.", () => {
+    it("Создает UserRouterController, внутри которого лежит UserRequestRules " +
+        "и UserRequestStrategies.", () => {
         /** @type {DomainCore} */
         const domainCore = chatServerBuilder.createDomainCore();
         /** @type {UserRouterController} */
-        const controller = chatServerBuilder.createUserRouterController(domainCore.getUserAggregate());
+        const controller = chatServerBuilder.createUserRouterController(
+            domainCore.getUserRequestRules(),
+            domainCore.getUserRequestStrategies()
+        );
         expect(controller).is.not.null;
-        expect(controller).to.have.property("userAggregate");
+        expect(controller).to.have.property("rules");
+        expect(controller).to.have.property("strategies");
     })
     it("Создает ChatRouterController, внутри которого лежит domainCore.chatAggregate.", () => {
         /** @type {DomainCore} */
         const domainCore = chatServerBuilder.createDomainCore();
         /** @type {ChatRouterController} */
-        const controller = chatServerBuilder.createChatRouterController(domainCore.getChatAggregate());
+        const controller = chatServerBuilder.createChatRouterController(
+            domainCore.getChatRequestRules(),
+            domainCore.getChatRequestStrategies(),
+        );
         expect(controller).is.not.null;
-        expect(controller).to.have.property("chatAggregate");
+        expect(controller).to.have.property("rules");
+        expect(controller).to.have.property("strategies");
     })
 })

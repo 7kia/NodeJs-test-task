@@ -1,5 +1,5 @@
 import {PromiseWrap} from "../../promise-wrap";
-import {Message} from "../entity/Message";
+import {ChatMessage} from "../entity/chat-message";
 import {Repository} from "./Repository";
 
 export class MessageRepository extends Repository {
@@ -35,11 +35,11 @@ export class MessageRepository extends Repository {
     /**
      *
      * @param {string} username
-     * @return {Promise<Message>}
+     * @return {Promise<ChatMessage>}
      */
     async get(username) {
         return await PromiseWrap.asyncPromise(async function() {
-            return new Message({
+            return new ChatMessage({
                 "id": null, "chat": null, "author": null,
                 "text": null, "createdAt": null
             });
