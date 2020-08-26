@@ -24,7 +24,7 @@ export class ChatServerBuilderDirector {
      */
     createChatRouterController() {
         return this.builder.createChatRouterController(
-            this.domainCore.getChatRequestRules().
+            this.domainCore.getChatRequestRules(),
             this.domainCore.getChatRequestStrategies()
         );
     }

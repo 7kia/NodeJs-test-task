@@ -17,7 +17,7 @@ export class MessageRepository extends Repository {
      * @return {Promise<number>}
      */
     async add(username) {
-        return await PromiseWrap.asyncPromise(async function() {
+        return await PromiseWrap.asyncWrap(async function() {
             return -1;
         }, true);
     }
@@ -27,7 +27,7 @@ export class MessageRepository extends Repository {
      * @return {Promise<boolean>}
      */
     async delete(username) {
-        return await PromiseWrap.asyncPromise(async function() {
+        return await PromiseWrap.asyncWrap(async function() {
             return false;
         }, true);
     }
@@ -38,7 +38,7 @@ export class MessageRepository extends Repository {
      * @return {Promise<ChatMessage>}
      */
     async get(username) {
-        return await PromiseWrap.asyncPromise(async function() {
+        return await PromiseWrap.asyncWrap(async function() {
             return new ChatMessage({
                 "id": null, "chat": null, "author": null,
                 "text": null, "createdAt": null

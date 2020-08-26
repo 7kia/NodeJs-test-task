@@ -1,32 +1,46 @@
 import express from 'express';
 import {ChatServerBuilderDirector} from "./chat-server-builder-director";
+import {PromiseWrap} from "../promise-wrap";
 
 /** @type {ChatServerBuilderDirector} */
 const chatServerBuilderDirector = new ChatServerBuilderDirector();
 /** @type {ChatRouterController} */
 let controller = chatServerBuilderDirector.createChatRouterController();
-let router = express.Router();
+/** @type {Router} */
+let chatRouter = express.Router();
 
-router.post('/add', function(req, res) {
-    controller.add(req, res);
-});
-
-router.get('/delete', function(req, res) {
-    controller.delete(req, res);
-});
-
-router.post('/messages/add', function(req, res) {
-    controller.addMessageToChat(req, res);
-});
-router.get('/messages/delete', function(req, res) {
-    controller.deleteMessageToChat(req, res);
+chatRouter.post('/add', async function(req, res) {
+    await PromiseWrap.asyncWrap(async function() {
+        await controller.add(req, res);
+    }, true);
 });
 
-router.post('/get', function(req, res) {
-    controller.getListForUser(req, res);
-});
-router.post('/messages/get', function(req, res) {
-    controller.getMessagesFromChat(req, res);
+chatRouter.get('/delete', async function(req, res) {
+    await PromiseWrap.asyncWrap(async function() {
+        await controller.delete(req, res);
+    }, true);
 });
 
-export {router};
+chatRouter.post('/messages/add', async function(req, res) {
+    await PromiseWrap.asyncWrap(async function() {
+        await controller.addMessageToChat(req, res);
+    }, true);
+});
+chatRouter.get('/messages/delete', async function(req, res) {
+    await PromiseWrap.asyncWrap(async function() {
+        await controller.deleteMessageToChat(req, res);
+    }, true);
+});
+
+chatRouter.post('/get', async function(req, res) {
+    await PromiseWrap.asyncWrap(async function() {
+        await controller.getListForUser(req, res);
+    }, true);
+});
+chatRouter.post('/messages/get', async function(req, res) {
+    await PromiseWrap.asyncWrap(async function() {
+        await controller.getMessagesFromChat(req, res);
+    }, true);
+});
+
+export {chatRouter};

@@ -1,19 +1,12 @@
 import {UserRepository} from "./repositories/user-repository";
 import {ChatRepository} from "./repositories/chat-repository";
-import {Client} from "pg";
 import {MessageRepository} from "./repositories/message-repository";
+import {MyConnection} from "./myConnection";
 
 export class DatabaseManager {
     constructor() {
         /** @private {Client} */
-        this.connection = new Client({
-            host: "localhost",
-            port: 5432,
-            database: "ChatServer",
-            user: "postgres",
-            password: "postgres",
-        })
-        this.connection.connect();
+        this.connection = MyConnection.create();
         /** @private {UserRepository} */
         this.userRepository = new UserRepository(this.connection);
         /** @private {ChatRepository} */

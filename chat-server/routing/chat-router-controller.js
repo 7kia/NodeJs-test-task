@@ -24,7 +24,7 @@ export class ChatRouterController {
             /** @type {Chat} */
             const newChat = await self.strategies.addChat(req.body);
             return newChat.asJson();
-        }, true);
+        }, req, res);
     }
 
     /**
@@ -36,7 +36,7 @@ export class ChatRouterController {
         return await PromiseWrap.asyncRouteSendWrap(async function() {
             self.rules.checkDeleteChatData(req.body);
             await self.strategies.deleteChat(req.body);
-        }, true);
+        }, req, res);
     }
 
     /**
@@ -50,7 +50,7 @@ export class ChatRouterController {
             /** @type {Message} */
             const newMessage = await self.strategies.addMessage(req.body);
             return newMessage.asJson();
-        }, true);
+        }, req, res);
     }
 
     /**
@@ -62,7 +62,7 @@ export class ChatRouterController {
         return await PromiseWrap.asyncRouteSendWrap(async function() {
             self.rules.checkDeleteMessageData(req.body);
             await self.strategies.deleteMessage(req.body);
-        }, true);
+        }, req, res);
     }
 
     /**
@@ -76,7 +76,7 @@ export class ChatRouterController {
             /** @type {Array<Chat>} */
             const chatList = await self.strategies.getListForUser(req.body);
             return ChatRouterController.#convertToJson(chatList);
-        }, true);
+        }, req, res);
     }
 
     /**
@@ -107,6 +107,6 @@ export class ChatRouterController {
             /** @type {Array<ChatMessage>} */
             const messages = await self.strategies.getMessagesFromChat(req.body);
             return ChatRouterController.#convertToJson(messages);
-        }, true);
+        }, req, res);
     }
 }
