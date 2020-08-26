@@ -19,7 +19,7 @@ export class UserRouterController {
     async add(req, res) {
         let self = this;
         return await PromiseWrap.asyncRouteSendWrap(async function() {
-            self.rules.checkNewUserData(req.body);
+            await self.rules.canAddUser(req.body);
             /** @type {User} */
             const newUser = await self.strategies.addUser(req.body);
             return newUser.asJson();
@@ -33,7 +33,7 @@ export class UserRouterController {
     async delete(req, res) {
         let self = this;
         return await PromiseWrap.asyncRouteSendWrap(async function() {
-            self.rules.checkDeleteUserData(req.body);
+            await self.rules.canDeleteUser(req.body);
             await self.strategies.deleteUser(req.body);
         }, req, res);
     }

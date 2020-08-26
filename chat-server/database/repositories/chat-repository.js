@@ -7,8 +7,7 @@ export class ChatRepository extends Repository {
      * @param {Client} connection
      */
     constructor(connection) {
-        super();
-        this.connection = connection;
+        super(connection);
     }
 
     /**
@@ -34,10 +33,10 @@ export class ChatRepository extends Repository {
 
     /**
      *
-     * @param {string} username
+     * @param {Object} searchParameters
      * @return {Promise<Chat>}
      */
-    async get(username) {
+    async find(searchParameters) {
         return await PromiseWrap.asyncWrap(async function() {
             return new Chat({
                 "id": null, "name": null, "users": null, "createdAt": null

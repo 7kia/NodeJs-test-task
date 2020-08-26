@@ -20,12 +20,14 @@ export class DatabaseManager {
     getUserRepository() {
         return this.userRepository;
     }
+
     /**
      * @return {ChatRepository}
      */
     getChatRepository() {
         return this.chatRepository;
     }
+
     /**
      * @return {MessageRepository}
      */

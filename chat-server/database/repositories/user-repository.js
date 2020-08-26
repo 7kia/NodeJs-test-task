@@ -2,13 +2,12 @@ import {User} from "../entity/user";
 import {PromiseWrap} from "../../promise-wrap";
 import {Repository} from "./Repository";
 
-export class UserRepository extends Repository{
+export class UserRepository extends Repository {
     /**
      * @param {Client} connection
      */
     constructor(connection) {
-        super();
-        this.connection = connection;
+        super(connection);
     }
 
     /**
@@ -34,10 +33,10 @@ export class UserRepository extends Repository{
 
     /**
      *
-     * @param {string} username
-     * @return {Promise<User>}
+     * @param {Object} searchParameters
+     * @return {Promise<User|null>}
      */
-    async get(username) {
+    async find(searchParameters) {
         return await PromiseWrap.asyncWrap(async function() {
             return new User({
                 "id": null, "username": null, "createdAt": null

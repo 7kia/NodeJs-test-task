@@ -160,7 +160,8 @@ describe("Класс ServerApiController. Генерирует REST-ответы
         let testChatId = 0;
         describe("Чат создается и возвращается id нового чата, если", () => {
             it("1) Указанные пользователи существуют;\n" +
-                "2) Не существует чата с указанными пользователями;", (done) => {
+                "2) Не существует чата с указанными пользователями;" +
+                "3) Имя чата не пустое", (done) => {
                 chai.request(SERVER_ADDRESS)
                     .post("chats/add")
                     .type("json")
@@ -220,6 +221,23 @@ describe("Класс ServerApiController. Генерирует REST-ответы
                         expect(res).to.be.json;
                         expect(JSON.parse(res.body).errorMessage).is.eq(
                             "Chat with users=${USERS} exist."
+                        );
+                        done();
+                    });
+            })
+            it("Имя чата пустое", (done) => {
+                chai.request(SERVER_ADDRESS)
+                    .post("chats/add")
+                    .type("json")
+                    .send({
+                        "name": null, "users": USERS
+                    }).then(function (err, res) {
+                        expect(err).to.be.not.null;
+
+                        expect(res).to.have.status(500);
+                        expect(res).to.be.json;
+                        expect(JSON.parse(res.body).errorMessage).is.eq(
+                            "Chat name is empty."
                         );
                         done();
                     });

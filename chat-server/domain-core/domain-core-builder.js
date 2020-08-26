@@ -28,7 +28,8 @@ export class DomainCoreBuilder {
     createChatRules() {
         return new ChatRequestRules(
             this.databaseManager.getChatRepository(),
-            this.databaseManager.getMessageRepository()
+            this.databaseManager.getMessageRepository(),
+            this.databaseManager.getUserRepository()
         );
     }
 
