@@ -177,7 +177,7 @@ export class ChatRequestRules {
      * @param {Object} json
      * @return {Promise<boolean>}
      */
-    async canGetListForUserRequestData(json) {
+    async canGetListForUser(json) {
         let self = this;
         return await PromiseWrap.asyncWrap(async function() {
             return await UserRequestRules.existUser(
@@ -190,7 +190,7 @@ export class ChatRequestRules {
      * @param {Object} json
      * @return {Promise<boolean>}
      */
-    async canGetMessagesFromChatRequestData(json) {
+    async canGetMessagesFromChat(json) {
         let self = this;
         return await PromiseWrap.asyncWrap(async function() {
             return await ChatRequestRules.#existChat(

@@ -20,7 +20,7 @@ export class ChatRouterController {
     async add(req, res) {
         let self = this;
         return await PromiseWrap.asyncRouteSendWrap(async function() {
-            self.rules.canAddChat(req.body);
+            await self.rules.canAddChat(req.body);
             /** @type {Chat} */
             const newChat = await self.strategies.addChat(req.body);
             return newChat.asJson();
@@ -34,7 +34,7 @@ export class ChatRouterController {
     async delete(req, res) {
         let self = this;
         return await PromiseWrap.asyncRouteSendWrap(async function() {
-            self.rules.canDeleteChat(req.body);
+            await self.rules.canDeleteChat(req.body);
             await self.strategies.deleteChat(req.body);
         }, req, res);
     }
@@ -46,7 +46,7 @@ export class ChatRouterController {
     async addMessageToChat(req, res) {
         let self = this;
         return await PromiseWrap.asyncRouteSendWrap(async function() {
-            self.rules.canAddMessage(req.body);
+            await self.rules.canAddMessage(req.body);
             /** @type {Message} */
             const newMessage = await self.strategies.addMessage(req.body);
             return newMessage.asJson();
@@ -60,7 +60,7 @@ export class ChatRouterController {
     async deleteMessageToChat(req, res) {
         let self = this;
         return await PromiseWrap.asyncRouteSendWrap(async function() {
-            self.rules.canDeleteMessage(req.body);
+            await self.rules.canDeleteMessage(req.body);
             await self.strategies.deleteMessage(req.body);
         }, req, res);
     }
@@ -72,7 +72,7 @@ export class ChatRouterController {
     async getListForUser(req, res) {
         let self = this;
         return await PromiseWrap.asyncRouteSendWrap(async function() {
-            self.rules.canGetListForUserRequestData(req.body);
+            await self.rules.canGetListForUser(req.body);
             /** @type {Array<Chat>} */
             const chatList = await self.strategies.getListForUser(req.body);
             return ChatRouterController.#convertToJson(chatList);
@@ -103,7 +103,7 @@ export class ChatRouterController {
     async getMessagesFromChat(req, res) {
         let self = this;
         return await PromiseWrap.asyncRouteSendWrap(async function() {
-            self.rules.canGetMessagesFromChatRequestData(req.body);
+            await self.rules.canGetMessagesFromChat(req.body);
             /** @type {Array<ChatMessage>} */
             const messages = await self.strategies.getMessagesFromChat(req.body);
             return ChatRouterController.#convertToJson(messages);
