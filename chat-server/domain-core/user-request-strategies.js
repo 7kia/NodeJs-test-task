@@ -1,3 +1,5 @@
+import {PromiseWrap} from "../promise-wrap";
+
 export class UserRequestStrategies {
     /**
      *
@@ -10,15 +12,27 @@ export class UserRequestStrategies {
 
     /**
      * @param {Object} json
+     * @return {Promise<number>}
      */
-    addUser(json) {
-        throw new Error("Not implement");
+    async addUser(json) {
+        let self = this;
+        return await PromiseWrap.asyncWrap(async function() {
+            /** @type {string} */
+            const username = json["username"];
+            return await self.userRepository.add(username);
+        }, true);
     }
 
     /**
      * @param {Object} json
+     * @return {Promise}
      */
-    deleteUser(json) {
-        throw new Error("Not implement");
+    async deleteUser(json) {
+        let self = this;
+        return await PromiseWrap.asyncWrap(async function() {
+            /** @type {string} */
+            const username = json["username"];
+            return await self.userRepository.delete(username);
+        }, true);
     }
 }

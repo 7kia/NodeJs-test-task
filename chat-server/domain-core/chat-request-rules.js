@@ -29,16 +29,14 @@ export class ChatRequestRules {
         let self = this;
         return await PromiseWrap.asyncWrap(async function() {
             /** @type {boolean} */
-            const chatNameNotEmpty = ChatRequestRules.#chatNameNotEmpty(
-                json, self.chatRepository
-            );
+            const chatNameNotEmpty = ChatRequestRules.#chatNameNotEmpty(json);
             /** @type {boolean} */
             const usersExist = await ChatRequestRules.#usersExist(
                 json, self.userRepository
             );
             /** @type {boolean} */
             const chatWithUsersNotExist = await ChatRequestRules.#chatWithUsersNotExist(
-                json, self.chatRepository, self.userRepository
+                json, self.chatRepository
             );
             return chatNameNotEmpty && usersExist && chatWithUsersNotExist;
         }, true);
@@ -46,10 +44,9 @@ export class ChatRequestRules {
 
     /**
      * @param {Object} json
-     * @param {ChatRepository} chatRepository
      * @return {boolean}
      */
-    static #chatNameNotEmpty(json, chatRepository) {
+    static #chatNameNotEmpty = function (json) {
         return ChatRequestRules.#notEmpty(json["name"]);
     }
 
@@ -57,7 +54,7 @@ export class ChatRequestRules {
      * @param {string|null} str
      * @return {boolean}
      */
-    static #notEmpty(str) {
+    static #notEmpty = function (str) {
         return (str !== "")
             && (str !== undefined)
             && (str !== null);
@@ -68,7 +65,7 @@ export class ChatRequestRules {
      * @param {UserRepository} userRepository
      * @return {Promise<boolean>}
      */
-    static async #usersExist(json, userRepository) {
+    static #usersExist = async function(json, userRepository) {
         return await PromiseWrap.asyncWrap(async function() {
             /** @type {Array<number>} */
             let notExistUsers = [];
@@ -93,10 +90,11 @@ export class ChatRequestRules {
      *
      * @param {Object} json
      * @param {ChatRepository} chatRepository
-     * @param {UserRepository} userRepository
      * @return {Promise<boolean>}
      */
-    static async #chatWithUsersNotExist(json, chatRepository, userRepository) {
+    static #chatWithUsersNotExist = async function (
+        json, chatRepository
+    ) {
         return await PromiseWrap.asyncWrap(async function() {
             return !await chatRepository.find({"users": json["users"]})
         }, true);
@@ -109,11 +107,11 @@ export class ChatRequestRules {
     async canDeleteChat(json) {
         let self = this;
         return await PromiseWrap.asyncWrap(async function() {
-            /** @type {Array<number>} */
-            const users = json["users"];
-            if (!await ChatRequestRules.#existChat({"users": users}, self.chatRepository)) {
+            /** @type {number} */
+            const id = json["id"];
+            if (!await ChatRequestRules.#existChat({"id": id}, self.chatRepository)) {
                 throw new Error(sprintf(
-                    "Chat with name %s and users %j not exist", json["name"], users
+                    "Chat with id %i", id
                 ));
             }
             return true;
@@ -125,7 +123,7 @@ export class ChatRequestRules {
      * @param {ChatRepository} chatRepository
      * @return {Promise<boolean>}
      */
-    static async #existChat(fields, chatRepository) {
+    static #existChat = async function (fields, chatRepository) {
         return await PromiseWrap.asyncWrap(async function() {
             /** @type {Chat} */
             const chat = await chatRepository.find(fields);
@@ -203,7 +201,7 @@ export class ChatRequestRules {
      * @param {Object} json
      * @return {boolean}
      */
-    static #messageNotEmpty(json) {
+    static #messageNotEmpty = function (json) {
         if (ChatRequestRules.#notEmpty(json["text"])) {
             return true;
         }

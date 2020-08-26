@@ -13,36 +13,39 @@ export class MessageRepository extends Repository {
 
     /**
      *
-     * @param {string} username
      * @return {Promise<number>}
+     * @param {number} chatId
+     * @param {number} author
+     * @param {string} text
      */
-    async add(username) {
+    async add(chatId, author, text) {
         return await PromiseWrap.asyncWrap(async function() {
             return -1;
         }, true);
     }
     /**
      *
-     * @param {string} username
+     * @param {number} id
      * @return {Promise<boolean>}
      */
-    async delete(username) {
+    async delete(id) {
         return await PromiseWrap.asyncWrap(async function() {
             return false;
         }, true);
     }
-
     /**
      *
-     * @param {string} username
-     * @return {Promise<ChatMessage>}
+     * @param {number} chatId
+     * @return {Promise<Array<ChatMessage>>}
      */
-    async get(username) {
+    async getMessages(chatId) {
         return await PromiseWrap.asyncWrap(async function() {
-            return new ChatMessage({
-                "id": null, "chat": null, "author": null,
-                "text": null, "createdAt": null
-            });
+            return [
+                new ChatMessage({
+                    "id": null, "chat": null, "author": null,
+                    "text": null, "createdAt": null
+                })
+            ];
         }, true);
     }
 }

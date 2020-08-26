@@ -47,7 +47,7 @@ export class ChatRouterController {
         let self = this;
         return await PromiseWrap.asyncRouteSendWrap(async function() {
             await self.rules.canAddMessage(req.body);
-            /** @type {Message} */
+            /** @type {ChatMessage} */
             const newMessage = await self.strategies.addMessage(req.body);
             return newMessage.asJson();
         }, req, res);

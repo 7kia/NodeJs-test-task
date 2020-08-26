@@ -1,3 +1,5 @@
+import {PromiseWrap} from "../promise-wrap";
+
 export class ChatRequestStrategies {
     /**
      *
@@ -13,43 +15,85 @@ export class ChatRequestStrategies {
 
     /**
      * @param {Object} json
+     * @return {Promise<number>}
      */
-    addChat(json) {
-        throw new Error("Not implement");
+    async addChat(json) {
+        let self = this;
+        return await PromiseWrap.asyncWrap(async function() {
+            /** @type {string} */
+            const name = json["name"];
+            /** @type {Array<number>} */
+            const users = json["users"];
+            return await self.chatRepository.add(name, users);
+        }, true);
     }
 
     /**
      * @param {Object} json
+     * @return {Promise<boolean>}
      */
-    deleteChat(json) {
-        throw new Error("Not implement");
+    async deleteChat(json) {
+        let self = this;
+        return await PromiseWrap.asyncWrap(async function() {
+            /** @type {number} */
+            const id = json["id"];
+            return await self.chatRepository.delete(id);
+        }, true);
     }
 
     /**
      * @param {Object} json
+     * @return {Promise<number>}
      */
-    addMessage(json) {
-        throw new Error("Not implement");
+    async addMessage(json) {
+        let self = this;
+        return await PromiseWrap.asyncWrap(async function() {
+            /** @type {number} */
+            const chatId = json["chat"];
+            /** @type {number} */
+            const author = json["author"];
+            /** @type {string} */
+            const text = json["text"];
+            return await self.messageRepository.add(chatId, author, text);
+        }, true);
     }
 
     /**
      * @param {Object} json
+     * @return {Promise<boolean>}
      */
-    deleteMessage(json) {
-        throw new Error("Not implement");
+    async deleteMessage(json) {
+        let self = this;
+        return await PromiseWrap.asyncWrap(async function() {
+            /** @type {number} */
+            const id = json["id"];
+            return await self.messageRepository.delete(id);
+        }, true);
     }
 
     /**
      * @param {Object} json
+     * @return {Promise<Array<Chat>>}
      */
-    getListForUser(json) {
-        throw new Error("Not implement");
+    async getListForUser(json) {
+        let self = this;
+        return await PromiseWrap.asyncWrap(async function() {
+            /** @type {number} */
+            const userId = json["user"];
+            return await self.messageRepository.findAllForUser(userId);
+        }, true);
     }
 
     /**
      * @param {Object} json
+     * @return {Promise<Array<ChatMessage>>}
      */
-    getMessagesFromChat(json) {
-        throw new Error("Not implement");
+    async getMessagesFromChat(json) {
+        let self = this;
+        return await PromiseWrap.asyncWrap(async function() {
+            /** @type {number} */
+            const chatId = json["chat"];
+            return await self.chatRepository.getMessages(chatId);
+        }, true);
     }
 }
