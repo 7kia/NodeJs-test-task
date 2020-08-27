@@ -1,5 +1,6 @@
 import {PromiseWrap} from "../helper-modules/promise-wrap";
 import {User} from "../database/entity/user";
+import {MessageGenerator} from "../helper-modules/message-generator";
 
 export class UserRequestRules {
     /**
@@ -21,7 +22,7 @@ export class UserRequestRules {
             /** @type {string} */
             const username = json["username"];
             if (await UserRequestRules.existUser({"username": username}, self.userRepository)) {
-                throw new Error("User with name \"${username}\" exist");
+                throw new Error(MessageGenerator.generateUserExist(username));
             }
             return true;
         }, true);
@@ -37,7 +38,7 @@ export class UserRequestRules {
             /** @type {string} */
             const username = json["username"];
             if (!await UserRequestRules.existUser({"username": username}, self.userRepository)) {
-                throw new Error("User with name \"${username}\" not exist");
+                throw new Error(MessageGenerator.generateUserNotExist(username));
             }
             return true;
         }, true);
@@ -51,7 +52,7 @@ export class UserRequestRules {
     static async existUser(fields, userRepository) {
         return await PromiseWrap.asyncWrap(async function() {
             /** @type {User} */
-            const user = await userRepository.find({"username": username});
+            const user = await userRepository.find(fields);
             return user !== null;
         }, true);
     }

@@ -1,6 +1,7 @@
 import {PromiseWrap} from "../helper-modules/promise-wrap";
 import {sprintf} from "sprintf-js";
 import {UserRequestRules} from "./user-request-rules";
+import {MessageGenerator} from "../helper-modules/message-generator";
 
 export class ChatRequestRules {
     /**
@@ -80,7 +81,7 @@ export class ChatRequestRules {
             }
 
             if (notExistUsers.length) {
-                throw new Error(sprintf("Users %j not exist", notExistUsers));
+                throw new Error(MessageGenerator.generateUserListNotExist(notExistUsers));
             }
             return true;
         }, true);
@@ -110,9 +111,7 @@ export class ChatRequestRules {
             /** @type {number} */
             const id = json["id"];
             if (!await ChatRequestRules.#existChat({"id": id}, self.chatRepository)) {
-                throw new Error(sprintf(
-                    "Chat with id %i", id
-                ));
+                throw new Error(MessageGenerator.generateChatNotExist(id));
             }
             return true;
         }, true);
@@ -160,11 +159,11 @@ export class ChatRequestRules {
     async canDeleteMessage(json) {
         let self = this;
         return await PromiseWrap.asyncWrap(async function() {
-            /** @type {boolean} */
+            /** @type {number} */
             const id = json["id"];
             if (!await ChatRequestRules.#existChat({"id": id}, self.chatRepository)) {
                 throw new Error(sprintf(
-                    "Chat with id %i not exist", id
+                    MessageGenerator.generateChatNotExist(id)
                 ));
             }
             return true;
@@ -205,6 +204,6 @@ export class ChatRequestRules {
         if (ChatRequestRules.#notEmpty(json["text"])) {
             return true;
         }
-        throw new Error("Try send empty message");
+        throw new Error(MessageGenerator.generateTrySendEmptyMessage());
     }
 }
