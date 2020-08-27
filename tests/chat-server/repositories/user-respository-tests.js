@@ -1,7 +1,9 @@
+import * as chai from 'chai';
 import {expect} from 'chai';
 import {RepositoriesFactory} from "../../../chat-server/database/repositories-factory";
 import {DatabaseManagerBuilder} from "../../../chat-server/database/database-manager-builder";
 import {User} from "../../../chat-server/database/entity/user";
+chai.use(require("chai-as-promised"));
 
 describe("Класс UserRepository. Отвечает за извлечение и внесение данных " +
     "в таблицу User.", () => {
@@ -21,8 +23,10 @@ describe("Класс UserRepository. Отвечает за извлечение 
                 .is.greaterThan(0);
         })
         it("Если не удалось, то бросает исключение.", async () => {
-            expect(await repository.add(userName))
-                .to.throw("User not add");
+            const func = async () => {
+                await repository.add(userName);
+            };
+            await expect(func()).to.be.rejectedWith(Error);
         })
     })
     describe("Может удалить пользователя с указанным именем", () => {
@@ -35,8 +39,11 @@ describe("Класс UserRepository. Отвечает за извлечение 
                 .is.eq(true);
         })
         it("Если не удалось, то бросает исключение.", async () => {
-            expect(await repository.delete(userName))
-                .to.throw("User not delete");
+            /** @type {Function} */
+            const func = async () => {
+                await repository.delete(userName);
+            };
+            await expect(func()).to.be.rejectedWith(Error);
         })
     })
     describe("Может найти пользователя с указанными полями", async () => {
@@ -52,9 +59,11 @@ describe("Класс UserRepository. Отвечает за извлечение 
             expect(user.username).is.eq(userName);
         })
         it("Если не удалось, то бросает исключение.", async () => {
-            /** @type {string} */
-            expect(await repository.find({"userName": null}))
-                .to.throw("User not delete");
+            /** @type {Function} */
+            const func = async () => {
+                await repository.find({"userName": null});
+            };
+            await expect(func()).to.be.rejectedWith(Error);
         })
     })
 })
