@@ -1,37 +1,35 @@
 import {UserRepository} from "./repositories/user-repository";
 import {ChatRepository} from "./repositories/chat-repository";
 import {MessageRepository} from "./repositories/message-repository";
-import {MyConnection} from "./myConnection";
 
 export class DatabaseManager {
-    constructor() {
-        /** @private {Client} */
-        this.connection = MyConnection.create();
-        /** @private {UserRepository} */
-        this.userRepository = new UserRepository(this.connection);
-        /** @private {ChatRepository} */
-        this.chatRepository = new ChatRepository(this.connection);
-        /** @private {MessageRepository} */
-        this.messageRepository = new MessageRepository(this.connection);
+    /**
+     *
+     * @param {Client} connection
+     * @param {Repositories} repositories
+     */
+    constructor(connection, repositories) {
+        /** @private {Repositories} */
+        this.repositories = repositories;
     }
     /**
      * @return {UserRepository}
      */
     getUserRepository() {
-        return this.userRepository;
+        return this.repositories.userRepository;
     }
 
     /**
      * @return {ChatRepository}
      */
     getChatRepository() {
-        return this.chatRepository;
+        return this.repositories.chatRepository;
     }
 
     /**
      * @return {MessageRepository}
      */
     getMessageRepository() {
-        return this.messageRepository;
+        return this.repositories.messageRepository;
     }
 }

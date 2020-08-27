@@ -1,10 +1,10 @@
 import {expect} from 'chai';
 import {DomainCoreBuilder} from "../../chat-server/domain-core/domain-core-builder";
-import {DatabaseManager} from "../../chat-server/database/database-manager";
+import {DatabaseManagerBuilderDirector} from "../../chat-server/database/database-manager-builder-director";
 
 describe("Класс DomainCoreBuilder.", () => {
     /** @type {DomainCoreBuilder} */
-    const builder = new DomainCoreBuilder(new DatabaseManager());
+    const builder = new DomainCoreBuilder(new DatabaseManagerBuilderDirector().createDatabaseManager());
     describe("Создает Rules.", () => {
         describe("Создает UserRequestRules.", () => {
             it("UserRequestRules содержит в себе UserDatabaseManager", () => {
