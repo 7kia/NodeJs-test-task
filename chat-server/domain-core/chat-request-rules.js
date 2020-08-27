@@ -1,4 +1,4 @@
-import {PromiseWrap} from "../promise-wrap";
+import {PromiseWrap} from "../helper-modules/promise-wrap";
 import {sprintf} from "sprintf-js";
 import {UserRequestRules} from "./user-request-rules";
 

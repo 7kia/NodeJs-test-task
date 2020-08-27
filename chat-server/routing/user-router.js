@@ -1,6 +1,6 @@
 import express from 'express';
 import {ChatServerBuilderDirector} from "./chat-server-builder-director";
-import {PromiseWrap} from "../promise-wrap";
+import {PromiseWrap} from "../helper-modules/promise-wrap";
 
 /** @type {ChatServerBuilderDirector} */
 const chatServerBuilderDirector = new ChatServerBuilderDirector();

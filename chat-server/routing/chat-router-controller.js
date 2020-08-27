@@ -1,4 +1,4 @@
-import {PromiseWrap} from "../promise-wrap";
+import {PromiseWrap} from "../helper-modules/promise-wrap";
 
 export class ChatRouterController {
     /**

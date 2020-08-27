@@ -1,4 +1,4 @@
-import {PromiseWrap} from "../../promise-wrap";
+import {PromiseWrap} from "../../helper-modules/promise-wrap";
 import {ChatMessage} from "../entity/chat-message";
 import {Repository} from "./Repository";
 

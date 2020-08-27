@@ -1,5 +1,5 @@
 import {User} from "../entity/user";
-import {PromiseWrap} from "../../promise-wrap";
+import {PromiseWrap} from "../../helper-modules/promise-wrap";
 import {Repository} from "./Repository";
 
 export class UserRepository extends Repository {
