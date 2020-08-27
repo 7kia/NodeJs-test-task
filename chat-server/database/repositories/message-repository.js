@@ -12,6 +12,38 @@ export class MessageRepository extends Repository {
     }
 
     /**
+     * @return {Promise<*>}
+     */
+    async createTableIfNotExist() {
+        /** @type {MessageRepository} */
+        let self = this;
+        return await PromiseWrap.asyncWrap(async function() {
+            try {
+                await self.connection.query(
+                    Repository.getCheckTableExistingString("Message")
+                );
+            } catch (exception) {
+                await self.connection.query(
+                    "CREATE TABLE public.\"Message\"\n" +
+                    "(\n" +
+                    "    id integer NOT NULL,\n" +
+                    "    chat integer,\n" +
+                    "    author integer,\n" +
+                    "    text \"char\"[],\n" +
+                    "    \"createdAt\" date,\n" +
+                    "    CONSTRAINT \"Message_pkey\" PRIMARY KEY (id)\n" +
+                    ")\n" +
+                    "\n" +
+                    "TABLESPACE pg_default;\n" +
+                    "\n" +
+                    "ALTER TABLE public.\"Message\"\n" +
+                    "    OWNER to postgres;"
+                );
+            }
+        }, true);
+    }
+
+    /**
      *
      * @return {Promise<number>}
      * @param {number} chatId

@@ -1,12 +1,14 @@
 import {DomainCoreBuilderDirector} from "../domain-core/domain-core-builder-director";
 import {UserRouterController} from "./user-router-controller";
 import {ChatRouterController} from "./chat-router-controller";
-import {DatabaseManagerBuilderDirector} from "../database/database-manager-builder-director";
 
 export class ChatServerBuilder {
-    constructor() {
+    /**
+     * @param {DatabaseManager} databaseManager
+     */
+    constructor(databaseManager) {
         /** @private {DatabaseManager} */
-        this.databaseManager = new DatabaseManagerBuilderDirector().createDatabaseManager();
+        this.databaseManager = databaseManager;
         /** @private {DomainCoreBuilderDirector} */
         this.domainCoreBuiderDirector = new DomainCoreBuilderDirector(this.databaseManager);
     }

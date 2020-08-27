@@ -1,9 +1,12 @@
 import {ChatServerBuilder} from "./chat-server-builder";
 
 export class ChatServerBuilderDirector {
-    constructor() {
+    /**
+     * @param {DatabaseManager} databaseManager
+     */
+    constructor(databaseManager) {
         /** @private {ChatServerBuilder} */
-        this.builder = new ChatServerBuilder();
+        this.builder = new ChatServerBuilder(databaseManager);
         /** @private {DomainCore} */
         this.domainCore = this.builder.createDomainCore();
     }
