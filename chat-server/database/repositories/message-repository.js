@@ -44,11 +44,10 @@ export class MessageRepository extends Repository {
     }
 
     /**
-     *
-     * @return {Promise<number>}
      * @param {number} chatId
      * @param {number} author
      * @param {string} text
+     * @return {Promise<number>}
      */
     async add(chatId, author, text) {
         return await PromiseWrap.asyncWrap(async function() {

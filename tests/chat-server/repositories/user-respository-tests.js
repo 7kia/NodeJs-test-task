@@ -13,9 +13,14 @@ describe("Класс UserRepository. Отвечает за извлечение 
     it("Создает таблицу, если её нет.", async () => {
         expect(async () => {await repository.createTableIfNotExist()}).to.not.throw();
     })
+    /** @type {string} */
+    const userName = "UserRepositoryAddTest";
+    /**
+     * Созданный пользователь удаляется в следующем тесте, в тесте на удаление
+     */
     describe("Может добавить пользователя с указанным именем", () => {
-        const userName = "UserRepositoryAddTest";
-        it("Если успешно, то возвращает его id.", async () => {
+        it("Если пользователь добавлен успешно, то возвращает " +
+            "его id.", async () => {
             /** @type {string} */
             const userName = "UserRepositoryAddTest";
             expect(await repository.add(userName))
@@ -30,7 +35,6 @@ describe("Класс UserRepository. Отвечает за извлечение 
         })
     })
     describe("Может удалить пользователя с указанным именем", () => {
-        const userName = "UserRepositoryAddTest";
         it("Если успешно, то возвращает true.", async () => {
             /** @type {string} */
             const userName = "UserRepositoryAddTest";
@@ -65,5 +69,6 @@ describe("Класс UserRepository. Отвечает за извлечение 
             };
             await expect(func()).to.be.rejectedWith(Error);
         })
+        await repository.delete(userName);
     })
 })
