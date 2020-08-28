@@ -7,6 +7,7 @@ chai.use(require("chai-as-promised"));
 
 describe("Класс UserRepository. Отвечает за извлечение и внесение данных " +
     "в таблицу User.", () => {
+    /** @type {Client} */
     const connection = new DatabaseManagerBuilder().createConnection();
     /** @type {UserRepository} */
     const repository = new RepositoriesFactory().createUserRepository(connection);

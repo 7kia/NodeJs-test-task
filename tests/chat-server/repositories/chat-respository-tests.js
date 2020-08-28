@@ -7,6 +7,7 @@ chai.use(require("chai-as-promised"));
 
 describe("Класс ChatRepository. Отвечает за извлечение и внесение данных " +
     "в таблицу Chat.", async () => {
+    /** @type {Client} */
     const connection = new DatabaseManagerBuilder().createConnection();
     /** @type {ChatRepository} */
     const chatRepository = new RepositoriesFactory().createChatRepository(connection);
@@ -104,6 +105,9 @@ describe("Класс ChatRepository. Отвечает за извлечение 
             for (let i = 0; i < chatAmount; i++) {
                 expect(chats[i]).is.instanceOf(Chat);
                 expect(chats[i].users).include(userId);
+                if (i > 0) {
+                    expect(chats[i].createdAt.getTime()).is.lessThan(chats[i - 1].createdAt.getTime());
+                }
             }
         })
         it("Если не удалось, то бросает исключение.", async () => {
