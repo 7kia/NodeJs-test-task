@@ -1,3 +1,5 @@
+import {logger} from "./logger";
+
 export class PromiseWrap {
     /**
      *
@@ -19,7 +21,7 @@ export class PromiseWrap {
                     errorHandler(exception);
                 }
 
-                console.log(exception);
+                logger.error(exception);
                 reject(exception);
             }
         });

@@ -1,6 +1,10 @@
 import {User} from "../entity/user";
 import {PromiseWrap} from "../../helper-modules/promise-wrap";
-import {Repository} from "./Repository";
+import {Repository} from "./repository";
+import {logger} from "../../helper-modules/logger";
+import {EntityExtractor} from "./entity-extractor";
+import {ErrorMessageGenerator} from "../../helper-modules/error-message-generator";
+import {MessageGenerator} from "../../helper-modules/message-generator";
 
 export class UserRepository extends Repository {
     /**
@@ -25,9 +29,9 @@ export class UserRepository extends Repository {
                 await self.connection.query(
                     "CREATE TABLE public.\"User\"\n" +
                     "(\n" +
-                    "    id integer NOT NULL,\n" +
+                    "    id integer NOT NULL DEFAULT nextval('\"User_id_seq\"'::regclass),\n" +
                     "    username \"char\"[],\n" +
-                    "    \"createdAt\" date,\n" +
+                    "    \"created_at\" date,\n" +
                     "    CONSTRAINT \"User_pkey\" PRIMARY KEY (id)\n" +
                     ")\n" +
                     "\n" +
@@ -36,6 +40,7 @@ export class UserRepository extends Repository {
                     "ALTER TABLE public.\"User\"\n" +
                     "    OWNER to postgres;"
                 );
+                logger.info(MessageGenerator.generateCreateTable("User"));
             }
         }, true);
     }
@@ -49,7 +54,14 @@ export class UserRepository extends Repository {
         /** @type {UserRepository} */
         let self = this;
         return await PromiseWrap.asyncWrap(async function() {
-            return -1;
+            /** @type {any} */
+            const res =  await self.connection.query(
+                Repository.getInsertQueueString("User", {
+                    "username": username, "created_at": Repository.generateNowTimeString()
+                }, true)
+            );
+            logger.info(MessageGenerator.generateAddUser(res.rows[0].id));
+            return res.rows[0].id;
         }, true);
     }
     /**
@@ -61,7 +73,17 @@ export class UserRepository extends Repository {
         /** @type {UserRepository} */
         let self = this;
         return await PromiseWrap.asyncWrap(async function() {
-            return false;
+            /** @type {any} */
+            const res = await self.connection.query(
+                Repository.getDeleteQueueString("User", {
+                    "username": username
+                })
+            );
+            if (res.rowCount) {
+                logger.info(MessageGenerator.generateDeleteUser(username));
+                return true;
+            }
+            throw new Error(ErrorMessageGenerator.generateUserNotDelete(username));
         }, true);
     }
 
@@ -74,9 +96,15 @@ export class UserRepository extends Repository {
         /** @type {UserRepository} */
         let self = this;
         return await PromiseWrap.asyncWrap(async function() {
-            return new User({
-                "id": null, "username": null, "createdAt": null
-            });
+            /** @type {any} */
+            const res =  await self.connection.query(
+                Repository.getSelectQueueString("User", searchParameters, true)
+            );
+            if (res.rows[0]) {
+                logger.info(MessageGenerator.generateFindUser(searchParameters));
+                return EntityExtractor.extractUser(res.rows[0]);
+            }
+            return null;
         }, true);
     }
 }

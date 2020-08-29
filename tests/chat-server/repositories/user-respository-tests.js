@@ -51,25 +51,24 @@ describe("Класс UserRepository. Отвечает за извлечение 
             await expect(func()).to.be.rejectedWith(Error);
         })
     })
-    describe("Может найти пользователя с указанными полями", async () => {
-        /** @type {string} */
-        const userName = "UserRepositoryAddTest2";
-        /** @type {number} */
-        const userId = await repository.add(userName);
-        it("Если успешно, то возвращает true.", async () => {
+    describe("Может найти пользователя с указанными полями", () => {
+        it("Если успешно, то возвращает пользователь.", async () => {
+            /** @type {string} */
+            const userName = "UserRepositoryAddTest2";
+            /** @type {number} */
+            const userId = await repository.add(userName);
+
             /** @type {User} */
             const user = await repository.find({"userName": userName, "id": userId});
             expect(user).is.instanceOf(User);
             expect(user.id).is.eq(userId);
             expect(user.username).is.eq(userName);
+
+            await repository.delete(userName);
         })
-        it("Если не удалось, то бросает исключение.", async () => {
-            /** @type {Function} */
-            const func = async () => {
-                await repository.find({"userName": null});
-            };
-            await expect(func()).to.be.rejectedWith(Error);
+        it("Если не удалось, то null.", async () => {
+            await expect(await repository.find({"userName": null}))
+                .to.be.null;
         })
-        await repository.delete(userName);
     })
 })

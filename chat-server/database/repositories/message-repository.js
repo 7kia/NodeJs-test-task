@@ -1,6 +1,6 @@
 import {PromiseWrap} from "../../helper-modules/promise-wrap";
 import {ChatMessage} from "../entity/chat-message";
-import {Repository} from "./Repository";
+import {Repository} from "./repository";
 
 export class MessageRepository extends Repository {
     /**
@@ -26,11 +26,11 @@ export class MessageRepository extends Repository {
                 await self.connection.query(
                     "CREATE TABLE public.\"Message\"\n" +
                     "(\n" +
-                    "    id integer NOT NULL,\n" +
+                    "    id integer NOT NULL DEFAULT nextval('\"User_id_seq\"'::regclass),\n" +
                     "    chat integer,\n" +
                     "    author integer,\n" +
                     "    text \"char\"[],\n" +
-                    "    \"createdAt\" date,\n" +
+                    "    \"created_at\" date,\n" +
                     "    CONSTRAINT \"Message_pkey\" PRIMARY KEY (id)\n" +
                     ")\n" +
                     "\n" +
@@ -74,7 +74,7 @@ export class MessageRepository extends Repository {
             return [
                 new ChatMessage({
                     "id": null, "chat": null, "author": null,
-                    "text": null, "createdAt": null
+                    "text": null, "created_at": null
                 })
             ];
         }, true);

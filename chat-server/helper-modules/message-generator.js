@@ -2,49 +2,35 @@ import {sprintf} from "sprintf-js";
 
 export class MessageGenerator {
     /**
-     * @param {Array<number>} userList
+     * @param {string} name
      * @return {string}
      */
-    static generateUserListNotExist(userList) {
-        return sprintf("Users %j not exist", userList);
+    static generateCreateTable(name) {
+        return sprintf("Create table public.\"%s\"", name);
     }
 
     /**
-     * @param {number} id
+     * @param {string} id
      * @return {string}
      */
-    static generateChatExist(id) {
-        return sprintf("Chat with id %i exist", id);
-    }
-
-    /**
-     * @param {number} id
-     * @return {string}
-     */
-    static generateChatNotExist(id) {
-        return sprintf("Chat with id %i not exist", id);
-    }
-
-    /**
-     * @return {string}
-     */
-    static generateTrySendEmptyMessage() {
-        return "Try send empty message";
+    static generateAddUser(id) {
+        return sprintf("Add user with id=%s", id);
     }
 
     /**
      * @param {string} username
      * @return {string}
      */
-    static generateUserExist(username) {
-        return sprintf("User with name %s exist", username);
+    static generateDeleteUser(username) {
+        return sprintf("Delete user with name=%s", username);
     }
 
     /**
-     * @param {string} username
+     *
+     * @param {Object} searchParameters
      * @return {string}
      */
-    static generateUserNotExist(username) {
-        return sprintf("User with name %s not exist", username);
+    static generateFindUser(searchParameters) {
+        return sprintf("Find user with fields %j", searchParameters);
     }
 }

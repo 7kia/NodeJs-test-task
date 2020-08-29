@@ -1,6 +1,6 @@
 import {PromiseWrap} from "../helper-modules/promise-wrap";
 import {User} from "../database/entity/user";
-import {MessageGenerator} from "../helper-modules/message-generator";
+import {ErrorMessageGenerator} from "../helper-modules/error-message-generator";
 
 export class UserRequestRules {
     /**
@@ -22,7 +22,7 @@ export class UserRequestRules {
             /** @type {string} */
             const username = json["username"];
             if (await UserRequestRules.existUser({"username": username}, self.userRepository)) {
-                throw new Error(MessageGenerator.generateUserExist(username));
+                throw new Error(ErrorMessageGenerator.generateUserExist(username));
             }
             return true;
         }, true);
@@ -38,7 +38,7 @@ export class UserRequestRules {
             /** @type {string} */
             const username = json["username"];
             if (!await UserRequestRules.existUser({"username": username}, self.userRepository)) {
-                throw new Error(MessageGenerator.generateUserNotExist(username));
+                throw new Error(ErrorMessageGenerator.generateUserNotExist(username));
             }
             return true;
         }, true);
