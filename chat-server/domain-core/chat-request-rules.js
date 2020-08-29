@@ -1,7 +1,7 @@
 import {PromiseWrap} from "../helper-modules/promise-wrap";
 import {sprintf} from "sprintf-js";
 import {UserRequestRules} from "./user-request-rules";
-import {MessageGenerator} from "../helper-modules/message-generator";
+import {ErrorMessageGenerator} from "../helper-modules/error-message-generator";
 
 export class ChatRequestRules {
     /**
@@ -81,7 +81,7 @@ export class ChatRequestRules {
             }
 
             if (notExistUsers.length) {
-                throw new Error(MessageGenerator.generateUserListNotExist(notExistUsers));
+                throw new Error(ErrorMessageGenerator.generateUserListNotExist(notExistUsers));
             }
             return true;
         }, true);
@@ -111,7 +111,7 @@ export class ChatRequestRules {
             /** @type {number} */
             const id = json["id"];
             if (!await ChatRequestRules.#existChat({"id": id}, self.chatRepository)) {
-                throw new Error(MessageGenerator.generateChatNotExist(id));
+                throw new Error(ErrorMessageGenerator.generateChatNotExist(id));
             }
             return true;
         }, true);
@@ -163,7 +163,7 @@ export class ChatRequestRules {
             const id = json["id"];
             if (!await ChatRequestRules.#existChat({"id": id}, self.chatRepository)) {
                 throw new Error(sprintf(
-                    MessageGenerator.generateChatNotExist(id)
+                    ErrorMessageGenerator.generateChatNotExist(id)
                 ));
             }
             return true;
@@ -204,6 +204,6 @@ export class ChatRequestRules {
         if (ChatRequestRules.#notEmpty(json["text"])) {
             return true;
         }
-        throw new Error(MessageGenerator.generateTrySendEmptyMessage());
+        throw new Error(ErrorMessageGenerator.generateTrySendEmptyMessage());
     }
 }

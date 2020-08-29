@@ -10,27 +10,39 @@ export class MessageGenerator {
     }
 
     /**
+     * @param {string} entityName
      * @param {string} id
      * @return {string}
      */
-    static generateAddUser(id) {
-        return sprintf("Add user with id=%s", id);
+    static generateAddEntity(entityName, id) {
+        return sprintf("Add %s with id=%s", entityName, id);
     }
 
     /**
-     * @param {string} username
+     * @param {string} entityName
+     * @param {Object} fields
      * @return {string}
      */
-    static generateDeleteUser(username) {
-        return sprintf("Delete user with name=%s", username);
+    static generateDeleteEntity(entityName,fields) {
+        return sprintf("Delete %s with %j", entityName, fields);
+    }
+
+    /**
+     * @param {string} entityName
+     * @param {Object} searchParameters
+     * @return {string}
+     */
+    static generateFindEntity(entityName, searchParameters) {
+        return sprintf("Find %s with fields %j", entityName, searchParameters);
     }
 
     /**
      *
-     * @param {Object} searchParameters
+     * @param {number} userId
+     * @param {Object} chats
      * @return {string}
      */
-    static generateFindUser(searchParameters) {
-        return sprintf("Find user with fields %j", searchParameters);
+    static generateFindChatsForUser(userId, chats) {
+        return sprintf("Find chats for user with id=%i. Found: %j", userId, chats);
     }
 }

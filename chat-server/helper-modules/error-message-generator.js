@@ -49,10 +49,11 @@ export class ErrorMessageGenerator {
     }
 
     /**
-     * @param {string} username
+     * @param {string} entityName
+     * @param {Object} fields
      * @return {string}
      */
-    static generateUserNotDelete(username) {
-        return sprintf("User with name %s not delete", username);
+    static generateUserNotDelete(entityName, fields) {
+        return sprintf("%s with %j not delete", entityName, fields);
     }
 }

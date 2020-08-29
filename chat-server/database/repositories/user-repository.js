@@ -60,7 +60,7 @@ export class UserRepository extends Repository {
                     "username": username, "created_at": Repository.generateNowTimeString()
                 }, true)
             );
-            logger.info(MessageGenerator.generateAddUser(res.rows[0].id));
+            logger.info(MessageGenerator.generateAddEntity("User", res.rows[0].id));
             return res.rows[0].id;
         }, true);
     }
@@ -80,10 +80,12 @@ export class UserRepository extends Repository {
                 })
             );
             if (res.rowCount) {
-                logger.info(MessageGenerator.generateDeleteUser(username));
+                logger.info(MessageGenerator.generateDeleteEntity(
+                    "User", {"username": username}
+                ));
                 return true;
             }
-            throw new Error(ErrorMessageGenerator.generateUserNotDelete(username));
+            throw new Error(ErrorMessageGenerator.generateUserNotDelete("User",{"username": username}));
         }, true);
     }
 
@@ -101,7 +103,7 @@ export class UserRepository extends Repository {
                 Repository.getSelectQueueString("User", searchParameters, true)
             );
             if (res.rows[0]) {
-                logger.info(MessageGenerator.generateFindUser(searchParameters));
+                logger.info(MessageGenerator.generateFindEntity("User", searchParameters));
                 return EntityExtractor.extractUser(res.rows[0]);
             }
             return null;

@@ -13,7 +13,7 @@ export class Chat extends ConvertToJson{
         this.name = data.name;
         /** @public {Array<number>} */
         this.users = data.users;
-        /** @public {string} */
+        /** @public {Date} */
         this.createdAt = data.createdAt;
     }
 
