@@ -35,7 +35,7 @@ describe("Класс MessageRepository. Отвечает за извлечени
                 };
                 await expect(func()).to.be.rejectedWith(Error);
             } catch (exception) {
-                console.log(exception);
+                console.error(exception);
             } finally {
                 await messageRepository.delete(messageId);
             }

@@ -14,31 +14,36 @@ describe("Класс UserRepository. Отвечает за извлечение 
     it("Создает таблицу, если её нет.", async () => {
         expect(async () => {await repository.createTableIfNotExist()}).to.not.throw();
     })
-    /** @type {string} */
-    const userName = "UserRepositoryAddTest";
     /**
      * Созданный пользователь удаляется в следующем тесте, в тесте на удаление
      */
     describe("Может добавить пользователя с указанным именем", () => {
+        /** @type {string} */
+        const userName = "UserRepositoryAddTest";
         it("Если пользователь добавлен успешно, то возвращает " +
             "его id.", async () => {
-            /** @type {string} */
-            const userName = "UserRepositoryAddTest";
             expect(await repository.add(userName))
                 .is.a("number")
                 .is.greaterThan(0);
         })
         it("Если не удалось, то бросает исключение.", async () => {
-            const func = async () => {
-                await repository.add(userName);
-            };
-            await expect(func()).to.be.rejectedWith(Error);
+            try {
+                const func = async () => {
+                    await repository.add(userName);
+                };
+                await expect(func()).to.be.rejectedWith(Error);
+            } catch (exception) {
+                console.error(exception);
+            } finally {
+                await repository.delete(userName);
+            }
         })
     })
     describe("Может удалить пользователя с указанным именем", () => {
         it("Если успешно, то возвращает true.", async () => {
             /** @type {string} */
-            const userName = "UserRepositoryAddTest";
+            const userName = "UserRepositoryAddTest2";
+            await repository.add(userName);
             expect(await repository.delete(userName))
                 .is.a("boolean")
                 .is.eq(true);
@@ -54,7 +59,7 @@ describe("Класс UserRepository. Отвечает за извлечение 
     describe("Может найти пользователя с указанными полями", () => {
         it("Если успешно, то возвращает пользователь.", async () => {
             /** @type {string} */
-            const userName = "UserRepositoryAddTest2";
+            const userName = "UserRepositoryAddTest3";
             /** @type {number} */
             const userId = await repository.add(userName);
 

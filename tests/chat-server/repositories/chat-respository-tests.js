@@ -32,11 +32,16 @@ describe("Класс ChatRepository. Отвечает за извлечение 
                 .is.greaterThan(0);
         })
         it("Если не удалось, то бросает исключение.", async () => {
-            const func = async () => {
-                await chatRepository.add(chatName, users);
-            };
-            await expect(func()).to.be.rejectedWith(Error);
-            await chatRepository.delete(chatId);
+            try {
+                const func = async () => {
+                    await chatRepository.add(chatName, users);
+                };
+                await expect(func()).to.be.rejectedWith(Error);
+            } catch (exception) {
+                console.error(exception);
+            } finally {
+                await chatRepository.delete(chatId);
+            }
         })
 
     })
@@ -55,7 +60,6 @@ describe("Класс ChatRepository. Отвечает за извлечение 
             };
             await expect(func()).to.be.rejectedWith(Error);
         })
-        await chatRepository.delete(chatId);
     })
     describe("Может найти чат с указанными полями", () => {
         it("Если успешно, то возвращает true.", async () => {
@@ -64,16 +68,16 @@ describe("Класс ChatRepository. Отвечает за извлечение 
             /** @type {Array<number>}  */
             const users2 = [3, 4];
             /** @type {number} */
-            const chatId2 = await chatRepository.add(chatName2, users2);
+            const chatId = await chatRepository.add(chatName2, users2);
 
             /** @type {Chat} */
             const chat = await chatRepository.find({"name": chatName2, "users": users2});
             expect(chat).is.instanceOf(Chat);
-            expect(chat.id).is.eq(chatId2);
+            expect(chat.id).is.eq(chatId);
             expect(chat.name).is.eq(chatName2);
             expect(chat.users).is.deep.equal(users2);
 
-            await chatRepository.delete(chatId2);
+            await chatRepository.delete(chatId);
         })
         it("Если не удалось, то возвращает null.", async () => {
             await expect(await chatRepository.find({"name": null}))
