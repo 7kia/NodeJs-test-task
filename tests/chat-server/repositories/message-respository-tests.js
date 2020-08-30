@@ -83,7 +83,7 @@ describe("Класс MessageRepository. Отвечает за извлечени
                 expect(messages[i]).is.instanceOf(ChatMessage);
                 expect(messages[i].author).is.eq(authorId);
                 if (i > 0) {
-                    expect(messages[i].createdAt.getTime()).is.greaterThan(messages[i - 1].createdAt.getTime());
+                    expect(messages[i].createdAt.getTime()).is.least(messages[i - 1].createdAt.getTime());
                 }
             }
 
