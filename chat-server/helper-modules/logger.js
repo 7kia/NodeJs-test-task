@@ -1,6 +1,6 @@
 import {createLogger, format, transports} from "winston";
 
-/** @type {Date} */
+/** @type {string} */
 const LOG_FORMAT = ".log";
 /** @type {Date} */
 const time = new Date();

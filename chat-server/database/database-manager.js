@@ -4,7 +4,6 @@ import {MessageRepository} from "./repositories/message-repository";
 
 export class DatabaseManager {
     /**
-     *
      * @param {Client} connection
      * @param {Repositories} repositories
      */
@@ -12,6 +11,7 @@ export class DatabaseManager {
         /** @private {Repositories} */
         this.repositories = repositories;
     }
+
     /**
      * @return {UserRepository}
      */

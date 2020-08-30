@@ -18,7 +18,7 @@ export class Chat extends ConvertToJson{
     }
 
     /**
-     * @return {{}}
+     * @return {Object}
      */
     asJson() {
         return {

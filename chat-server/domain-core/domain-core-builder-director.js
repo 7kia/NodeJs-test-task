@@ -3,7 +3,6 @@ import {DomainCore} from "./domain-core";
 
 export class DomainCoreBuilderDirector {
     /**
-     *
      * @param {DatabaseManager} databaseManager
      */
     constructor(databaseManager) {
@@ -12,8 +11,8 @@ export class DomainCoreBuilderDirector {
         /** @private {DomainCoreBuilder} */
         this.builder = new DomainCoreBuilder(this.databaseManager);
     }
+
     /**
-     *
      * @returns {DomainCore}
      */
     createDomainCore() {

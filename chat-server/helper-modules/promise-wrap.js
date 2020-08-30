@@ -3,8 +3,8 @@ import {logger} from "./logger";
 export class PromiseWrap {
     /**
      *
-     * @param func
-     * @param wait
+     * @param {Function} func
+     * @param {boolean} wait
      * @param {Function} errorHandler
      * @return {Promise<any>}
      */
@@ -28,11 +28,10 @@ export class PromiseWrap {
     }
 
     /**
-     *
      * @param {Function} func
      * @param {Request} req
      * @param {Response} res
-     * @return {Promise<*>}
+     * @return {Promise}
      */
     static async asyncRouteSendWrap(func, req, res) {
         return await PromiseWrap.asyncWrap(async function() {

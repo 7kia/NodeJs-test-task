@@ -1,4 +1,4 @@
-import {MyConnecntion} from "./my-connecntion";
+import {MyConnection} from "./my-connection";
 import {Repositories} from "./repositories";
 import {DatabaseManager} from "./database-manager";
 import {RepositoriesFactory} from "./repositories-factory";
@@ -9,11 +9,12 @@ export class DatabaseManagerBuilder {
         /** @private {RepositoriesFactory} */
         this.repositoriesFactory = new RepositoriesFactory();
     }
+
     /**
      * @return {Client}
      */
     createConnection() {
-        return MyConnecntion.create();
+        return MyConnection.create();
     }
 
     /**

@@ -15,7 +15,7 @@ export class UserRepository extends Repository {
     }
 
     /**
-     * @return {Promise<*>}
+     * @return {Promise}
      */
     async createTableIfNotExist() {
         /** @type {UserRepository} */

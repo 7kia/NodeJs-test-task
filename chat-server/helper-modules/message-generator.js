@@ -37,7 +37,6 @@ export class MessageGenerator {
     }
 
     /**
-     *
      * @param {number} userId
      * @param {Object} chats
      * @return {string}

@@ -8,7 +8,6 @@ import {Rules} from "./rules";
 
 export class DomainCoreBuilder {
     /**
-     *
      * @param {DatabaseManager} databaseManager
      */
     constructor(databaseManager) {
@@ -32,7 +31,6 @@ export class DomainCoreBuilder {
             this.databaseManager.getUserRepository()
         );
     }
-
 
     /**
      * @param {UserRequestRules} userRules
@@ -61,12 +59,12 @@ export class DomainCoreBuilder {
     }
 
     /**
-     * @param {UserRequestStrategies} userStrategies
-     * @param {ChatRequestStrategies} chatStrategies
+     * @param {UserRequestStrategies} userRequestStrategies
+     * @param {ChatRequestStrategies} chatRequestStrategies
      * @return {Strategies}
      */
-    createStrategies(userStrategies, chatStrategies) {
-        return new Strategies(userStrategies, chatStrategies);
+    createStrategies(userRequestStrategies, chatRequestStrategies) {
+        return new Strategies(userRequestStrategies, chatRequestStrategies);
     }
 
     /**

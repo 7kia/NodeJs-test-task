@@ -1,7 +1,7 @@
 import {Client} from "pg";
 
 
-export class MyConnecntion {
+export class MyConnection {
     /** @private {Client} */
     static postgreConnection = null;
 
@@ -10,16 +10,16 @@ export class MyConnecntion {
      * @return {Client}
      */
     static create() {
-        if (!MyConnecntion.postgreConnection) {
-            MyConnecntion.postgreConnection = new Client({
+        if (!MyConnection.postgreConnection) {
+            MyConnection.postgreConnection = new Client({
                 host: "localhost",
                 port: 5432,
                 database: "ChatServer",
                 user: "postgres",
                 password: "1",
             })
-            MyConnecntion.postgreConnection.connect();
+            MyConnection.postgreConnection.connect();
         }
-        return MyConnecntion.postgreConnection;
+        return MyConnection.postgreConnection;
     }
 }

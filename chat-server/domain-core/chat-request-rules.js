@@ -5,7 +5,6 @@ import {ErrorMessageGenerator} from "../helper-modules/error-message-generator";
 
 export class ChatRequestRules {
     /**
-     *
      * @param {ChatRepository} chatRepository
      * @param {MessageRepository} messageRepository
      * @param {UserRepository} userRepository
@@ -75,7 +74,7 @@ export class ChatRequestRules {
             for (let i = 0; i < users.length; i++) {
                 /** @type {number} */
                 const userId = users[i];
-                if (!await userRepository.get({"id": userId})) {
+                if (!await userRepository.find({"id": userId})) {
                     notExistUsers.push(userId);
                 }
             }
@@ -140,11 +139,11 @@ export class ChatRequestRules {
             /** @type {boolean} */
             const chatExist = await ChatRequestRules.#existChat(
                 {"id": json["chat"]}, self.chatRepository
-            )
+            );
             /** @type {boolean} */
             const authorExist = await UserRequestRules.existUser(
                 {"id": json["author"]}, self.userRepository
-            )
+            );
             /** @type {boolean} */
             const messageNotEmpty = await ChatRequestRules.#messageNotEmpty(json);
 
@@ -193,7 +192,8 @@ export class ChatRequestRules {
             return await ChatRequestRules.#existChat(
                 {"id": json["chat"]}, self.chatRepository
             );
-        }, true);      }
+        }, true);
+    }
 
     /**
      *

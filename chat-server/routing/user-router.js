@@ -19,20 +19,20 @@ async function func() {
     let controller = chatServerBuilderDirector.createUserRouterController();
 
     userRouter.post('/add', async function(req, res) {
-        await PromiseWrap.asyncWrap(async function() {
+        return await PromiseWrap.asyncWrap(async function() {
             await controller.add(req, res);
         }, true);
     });
 
     userRouter.get('/delete', async function(req, res) {
-        await PromiseWrap.asyncWrap(async function() {
+        return await PromiseWrap.asyncWrap(async function() {
             await controller.delete(req, res);
         }, true);
     });
 }
 func().then(
-    function(p1){return undefined;},
-    function(p1){return undefined;},
+    function(){return undefined;},
+    function(){return undefined;},
     undefined
 );
 

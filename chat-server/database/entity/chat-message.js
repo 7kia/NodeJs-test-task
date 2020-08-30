@@ -20,7 +20,7 @@ export class ChatMessage extends ConvertToJson {
     }
 
     /**
-     * @return {{}}
+     * @return {Object}
      */
     asJson() {
         return {

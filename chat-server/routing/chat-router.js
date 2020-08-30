@@ -5,7 +5,7 @@ import {DatabaseManagerBuilderDirector} from "../database/database-manager-build
 
 /** @type {Router} */
 let chatRouter = express.Router();
-async function func() {
+async function initRoute() {
     /** @type {DatabaseManagerBuilderDirector} */
     const databaseManagerBuilderDirector = new DatabaseManagerBuilderDirector();
     /** @type {DatabaseManager} */
@@ -19,42 +19,42 @@ async function func() {
 
 
     chatRouter.post('/add', async function(req, res) {
-        await PromiseWrap.asyncWrap(async function() {
-            await controller.add(req, res);
+        return await PromiseWrap.asyncWrap(async function() {
+            return await controller.add(req, res);
         }, true);
     });
 
     chatRouter.get('/delete', async function(req, res) {
-        await PromiseWrap.asyncWrap(async function() {
+        return await PromiseWrap.asyncWrap(async function() {
             await controller.delete(req, res);
         }, true);
     });
 
     chatRouter.post('/messages/add', async function(req, res) {
-        await PromiseWrap.asyncWrap(async function() {
-            await controller.addMessageToChat(req, res);
+        return await PromiseWrap.asyncWrap(async function() {
+            return await controller.addMessageToChat(req, res);
         }, true);
     });
     chatRouter.get('/messages/delete', async function(req, res) {
-        await PromiseWrap.asyncWrap(async function() {
+        return await PromiseWrap.asyncWrap(async function() {
             await controller.deleteMessageToChat(req, res);
         }, true);
     });
 
     chatRouter.post('/get', async function(req, res) {
-        await PromiseWrap.asyncWrap(async function() {
-            await controller.getListForUser(req, res);
+        return await PromiseWrap.asyncWrap(async function() {
+            return await controller.getListForUser(req, res);
         }, true);
     });
     chatRouter.post('/messages/get', async function(req, res) {
-        await PromiseWrap.asyncWrap(async function() {
-            await controller.getMessagesFromChat(req, res);
+        return await PromiseWrap.asyncWrap(async function() {
+            return await controller.getMessagesFromChat(req, res);
         }, true);
     });
 }
-func().then(
-    function(p1){return undefined;},
-    function(p1){return undefined;},
+initRoute().then(
+    function(){return undefined;},
+    function(){return undefined;},
     undefined
 );
 export {chatRouter};

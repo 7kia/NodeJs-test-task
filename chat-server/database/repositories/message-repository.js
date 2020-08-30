@@ -16,7 +16,7 @@ export class MessageRepository extends Repository {
     }
 
     /**
-     * @return {Promise<*>}
+     * @return {Promise}
      */
     async createTableIfNotExist() {
         /** @type {MessageRepository} */

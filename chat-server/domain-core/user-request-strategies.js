@@ -2,7 +2,6 @@ import {PromiseWrap} from "../helper-modules/promise-wrap";
 
 export class UserRequestStrategies {
     /**
-     *
      * @param {UserRepository} userDatabaseManager
      */
     constructor(userDatabaseManager) {
@@ -25,7 +24,7 @@ export class UserRequestStrategies {
 
     /**
      * @param {Object} json
-     * @return {Promise}
+     * @return {Promise<boolean>}
      */
     async deleteUser(json) {
         let self = this;

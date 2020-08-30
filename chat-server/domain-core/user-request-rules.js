@@ -4,7 +4,6 @@ import {ErrorMessageGenerator} from "../helper-modules/error-message-generator";
 
 export class UserRequestRules {
     /**
-     *
      * @param {UserRepository} userDatabaseManager
      */
     constructor(userDatabaseManager) {

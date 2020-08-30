@@ -3,7 +3,6 @@ import {ChatRequestStrategies} from "./chat-request-strategies";
 
 export class DomainCore {
     /**
-     *
      * @param {Rules} rules
      * @param {Strategies} strategies
      */
@@ -15,7 +14,6 @@ export class DomainCore {
     }
 
     /**
-     *
      * @returns {UserRequestStrategies}
      */
     getUserRequestStrategies() {
@@ -23,14 +21,13 @@ export class DomainCore {
     }
 
     /**
-     *
      * @returns {ChatRequestStrategies}
      */
     getChatRequestStrategies() {
         return this.strategies.chatRequestStrategies;
     }
+
     /**
-     *
      * @returns {UserRequestRules}
      */
     getUserRequestRules() {
@@ -38,7 +35,6 @@ export class DomainCore {
     }
 
     /**
-     *
      * @returns {ChatRequestRules}
      */
     getChatRequestRules() {

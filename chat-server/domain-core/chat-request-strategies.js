@@ -2,7 +2,6 @@ import {PromiseWrap} from "../helper-modules/promise-wrap";
 
 export class ChatRequestStrategies {
     /**
-     *
      * @param {ChatRepository} chatRepository
      * @param {MessageRepository} messageRepository
      */

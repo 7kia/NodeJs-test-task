@@ -16,7 +16,7 @@ export class ChatRepository extends Repository {
     }
 
     /**
-     * @return {Promise<*>}
+     * @return {Promise}
      */
     async createTableIfNotExist() {
         /** @type {ChatRepository} */
@@ -46,8 +46,8 @@ export class ChatRepository extends Repository {
             }
         }, true);
     }
+
     /**
-     *
      * @param {string} name
      * @param {Array<number>} users
      * @return {Promise<number>}
@@ -87,7 +87,9 @@ export class ChatRepository extends Repository {
                 ));
                 return true;
             }
-            throw new Error(ErrorMessageGenerator.generateEntityNotDelete("Chat", {"id": id}));
+            throw new Error(ErrorMessageGenerator.generateEntityNotDelete(
+                "Chat", {"id": id}
+            ));
         }, true);
     }
 

@@ -22,7 +22,6 @@ export class ChatServerBuilderDirector {
     }
 
     /**
-     *
      * @returns {ChatRouterController}
      */
     createChatRouterController() {
