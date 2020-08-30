@@ -16,7 +16,7 @@ export class ChatMessage extends ConvertToJson {
         /** @public {string} */
         this.text = data.text;
         /** @public {Date} */
-        this.createdAt = data.createdAt;
+        this.createdAt = data.created_at;
     }
 
     /**

@@ -14,7 +14,7 @@ export class Chat extends ConvertToJson{
         /** @public {Array<number>} */
         this.users = data.users;
         /** @public {Date} */
-        this.createdAt = data.createdAt;
+        this.createdAt = data.created_at;
     }
 
     /**

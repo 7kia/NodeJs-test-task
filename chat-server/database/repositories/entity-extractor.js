@@ -61,7 +61,7 @@ export class EntityExtractor {
     static extractChatMessage(data) {
         return new ChatMessage({
             "id": data.id, "chat": data.chat, "author": data.author,
-            "text": data.text, "createdAt": data.created_at
+            "text": data.text, "created_at": data.created_at
         });
     }
 }
