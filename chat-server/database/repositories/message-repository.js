@@ -1,6 +1,10 @@
 import {PromiseWrap} from "../../helper-modules/promise-wrap";
 import {ChatMessage} from "../entity/chat-message";
 import {Repository} from "./repository";
+import {logger} from "../../helper-modules/logger";
+import {MessageGenerator} from "../../helper-modules/message-generator";
+import {ErrorMessageGenerator} from "../../helper-modules/error-message-generator";
+import {EntityExtractor} from "./entity-extractor";
 
 export class MessageRepository extends Repository {
     /**
@@ -39,6 +43,7 @@ export class MessageRepository extends Repository {
                     "ALTER TABLE public.\"Message\"\n" +
                     "    OWNER to postgres;"
                 );
+                logger.info(MessageGenerator.generateCreateTable("Message"));
             }
         }, true);
     }
@@ -50,18 +55,42 @@ export class MessageRepository extends Repository {
      * @return {Promise<number>}
      */
     async add(chatId, author, text) {
+        /** @type {MessageRepository} */
+        let self = this;
         return await PromiseWrap.asyncWrap(async function() {
-            return -1;
+            /** @type {any} */
+            const res = await self.connection.query(
+                Repository.getInsertQueueString("Message", {
+                    "chat": chatId, "author": author,
+                    "text": text, "created_at": Repository.generateNowTimeString()
+                }, true)
+            );
+            logger.info(MessageGenerator.generateAddEntity("Message", res.rows[0].id));
+            return res.rows[0].id;
         }, true);
     }
+
     /**
-     *
      * @param {number} id
      * @return {Promise<boolean>}
      */
     async delete(id) {
+        /** @type {MessageRepository} */
+        let self = this;
         return await PromiseWrap.asyncWrap(async function() {
-            return false;
+            /** @type {any} */
+            const res = await self.connection.query(
+                Repository.getDeleteQueueString("Message", {
+                    "id": id
+                })
+            );
+            if (res.rowCount) {
+                logger.info(MessageGenerator.generateDeleteEntity(
+                    "Message", {"id": id}
+                ));
+                return true;
+            }
+            throw new Error(ErrorMessageGenerator.generateEntityNotDelete("Message", {"id": id}));
         }, true);
     }
     /**
@@ -70,13 +99,14 @@ export class MessageRepository extends Repository {
      * @return {Promise<Array<ChatMessage>>}
      */
     async getMessages(chatId) {
+        /** @type {MessageRepository} */
+        let self = this;
         return await PromiseWrap.asyncWrap(async function() {
-            return [
-                new ChatMessage({
-                    "id": null, "chat": null, "author": null,
-                    "text": null, "created_at": null
-                })
-            ];
+            /** @type {any} */
+            const res =  await self.connection.query(
+                Repository.getSelectQueueString("Message", {"chat": chatId})
+            );
+            return EntityExtractor.extractChatMessages(res.rows);
         }, true);
     }
 }

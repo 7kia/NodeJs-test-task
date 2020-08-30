@@ -85,7 +85,7 @@ export class UserRepository extends Repository {
                 ));
                 return true;
             }
-            throw new Error(ErrorMessageGenerator.generateUserNotDelete("User",{"username": username}));
+            throw new Error(ErrorMessageGenerator.generateEntityNotDelete("User",{"username": username}));
         }, true);
     }
 

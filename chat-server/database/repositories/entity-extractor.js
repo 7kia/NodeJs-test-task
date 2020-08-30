@@ -1,5 +1,6 @@
 import {User} from "../entity/user";
 import {Chat} from "../entity/chat";
+import {ChatMessage} from "../entity/chat-message";
 
 export class EntityExtractor {
     /**
@@ -38,5 +39,29 @@ export class EntityExtractor {
             "users": data.users,
             "created_at": new Date(data.created_at)
         })
+    }
+
+    /**
+     * @param {Array<Object>} data
+     * @return {Array<ChatMessage>}
+     */
+    static extractChatMessages(data) {
+        /** @type {Array<ChatMessage>} */
+        let result = [];
+        for (let i = 0; i < data.length; i++) {
+            result.push(EntityExtractor.extractChatMessage(data[i]));
+        }
+        return result;
+    }
+
+    /**
+     * @param {Object} data
+     * @return {ChatMessage}
+     */
+    static extractChatMessage(data) {
+        return new ChatMessage({
+            "id": data.id, "chat": data.chat, "author": data.author,
+            "text": data.text, "created_at": data.created_at
+        });
     }
 }

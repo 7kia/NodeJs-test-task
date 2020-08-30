@@ -19,7 +19,7 @@ export class ChatRepository extends Repository {
      * @return {Promise<*>}
      */
     async createTableIfNotExist() {
-        /** @type {MessageRepository} */
+        /** @type {ChatRepository} */
         let self = this;
         return await PromiseWrap.asyncWrap(async function() {
             try {
@@ -87,7 +87,7 @@ export class ChatRepository extends Repository {
                 ));
                 return true;
             }
-            throw new Error(ErrorMessageGenerator.generateUserNotDelete("Chat", {"id": id}));
+            throw new Error(ErrorMessageGenerator.generateEntityNotDelete("Chat", {"id": id}));
         }, true);
     }
 

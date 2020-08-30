@@ -53,7 +53,7 @@ export class ErrorMessageGenerator {
      * @param {Object} fields
      * @return {string}
      */
-    static generateUserNotDelete(entityName, fields) {
+    static generateEntityNotDelete(entityName, fields) {
         return sprintf("%s with %j not delete", entityName, fields);
     }
 }
