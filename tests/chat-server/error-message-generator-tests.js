@@ -13,8 +13,8 @@ describe("Класс ErrorMessageGenerator. Генерирует сообщен�
         it("Чат существует.", () => {
             /** @type {number} */
             const id = 2;
-            expect(ErrorMessageGenerator.generateChatExist(id)).is.eq(
-                "Chat with id " + id + " exist"
+            expect(ErrorMessageGenerator.generateChatExist({"id": id})).is.eq(
+                "Chat with {\"id\":" + id + "} exist"
             );
         })
         it("Чата не существует.", () => {
@@ -25,8 +25,10 @@ describe("Класс ErrorMessageGenerator. Генерирует сообщен�
             );
         })
         it("Попытка отправить пустое сообщение.", () => {
-            expect(ErrorMessageGenerator.generateTrySendEmptyMessage()).is.eq(
-                "Try send empty message"
+            /** @type {number} */
+            const authorId = 1;
+            expect(ErrorMessageGenerator.generateTrySendEmptyMessage(authorId)).is.eq(
+                "User with id " + authorId + " try send empty message"
             );
         })
         it("Пользователь существует.", () => {
@@ -39,8 +41,8 @@ describe("Класс ErrorMessageGenerator. Генерирует сообщен�
         it("Пользователя не существует.", () => {
             /** @type {string} */
             const userName = "name4";
-            expect(ErrorMessageGenerator.generateUserNotExist(userName)).is.eq(
-                "User with name " + userName + " not exist"
+            expect(ErrorMessageGenerator.generateUserNotExist({"username": userName})).is.eq(
+                "User with {\"username\":\"" + userName + "\"} not exist"
             );
         })
     })

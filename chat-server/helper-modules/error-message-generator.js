@@ -10,11 +10,11 @@ export class ErrorMessageGenerator {
     }
 
     /**
-     * @param {number} id
+     * @param {Object} data
      * @return {string}
      */
-    static generateChatExist(id) {
-        return sprintf("Chat with id %i exist", id);
+    static generateChatExist(data) {
+        return sprintf("Chat with %j exist", data);
     }
 
     /**
@@ -26,10 +26,11 @@ export class ErrorMessageGenerator {
     }
 
     /**
+     * @param {number} authorId
      * @return {string}
      */
-    static generateTrySendEmptyMessage() {
-        return "Try send empty message";
+    static generateTrySendEmptyMessage(authorId) {
+        return sprintf("User with id %i try send empty message", authorId);
     }
 
     /**
@@ -41,11 +42,11 @@ export class ErrorMessageGenerator {
     }
 
     /**
-     * @param {string} username
+     * @param {Object} data
      * @return {string}
      */
-    static generateUserNotExist(username) {
-        return sprintf("User with name %s not exist", username);
+    static generateUserNotExist(data) {
+        return sprintf("User with %j not exist", data);
     }
 
     /**
@@ -55,5 +56,20 @@ export class ErrorMessageGenerator {
      */
     static generateEntityNotDelete(entityName, fields) {
         return sprintf("%s with %j not delete", entityName, fields);
+    }
+
+    /**
+     * @return {string}
+     */
+    static chatNameEmpty() {
+        return "Chat name is empty";
+    }
+
+    /**
+     * @param {number} id
+     * @return {string}
+     */
+    static generateMessageNotExist(id) {
+        return sprintf("Message with id %i", id);
     }
 }

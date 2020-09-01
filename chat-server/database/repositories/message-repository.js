@@ -109,4 +109,25 @@ export class MessageRepository extends Repository {
             return EntityExtractor.extractChatMessages(res.rows);
         }, true);
     }
+
+
+    /**
+     * @param {Object} searchParameters
+     * @return {Promise<Message|null>}
+     */
+    async find(searchParameters) {
+        /** @type {MessageRepository} */
+        let self = this;
+        return await PromiseWrap.asyncWrap(async function() {
+            /** @type {any} */
+            const res =  await self.connection.query(
+                Repository.getSelectQueueString("Message", searchParameters, true)
+            );
+            if (res.rows[0]) {
+                logger.info(MessageGenerator.generateFindEntity("Message", searchParameters));
+                return EntityExtractor.extractChatMessage(res.rows[0]);
+            }
+            return null;
+        }, true);
+    }
 }

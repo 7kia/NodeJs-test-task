@@ -16,20 +16,20 @@ export class ChatRouterController {
     /**
      * @param {Request} req
      * @param {Response} res
+     * @return {Promise}
      */
     async add(req, res) {
         let self = this;
         return await PromiseWrap.asyncRouteSendWrap(async function() {
             await self.rules.canAddChat(req.body);
-            /** @type {Chat} */
-            const newChat = await self.strategies.addChat(req.body);
-            return newChat.asJson();
+            res.send({"id": await self.strategies.addChat(req.body)});
         }, req, res);
     }
 
     /**
      * @param {Request} req
      * @param {Response} res
+     * @return {Promise}
      */
     async delete(req, res) {
         let self = this;
@@ -42,20 +42,20 @@ export class ChatRouterController {
     /**
      * @param {Request} req
      * @param {Response} res
+     * @return {Promise}
      */
     async addMessageToChat(req, res) {
         let self = this;
         return await PromiseWrap.asyncRouteSendWrap(async function() {
             await self.rules.canAddMessage(req.body);
-            /** @type {ChatMessage} */
-            const newMessage = await self.strategies.addMessage(req.body);
-            return newMessage.asJson();
+            res.send({"id": await self.strategies.addMessage(req.body)});
         }, req, res);
     }
 
     /**
      * @param {Request} req
      * @param {Response} res
+     * @return {Promise}
      */
     async deleteMessageToChat(req, res) {
         let self = this;
@@ -73,40 +73,42 @@ export class ChatRouterController {
         let self = this;
         return await PromiseWrap.asyncRouteSendWrap(async function() {
             await self.rules.canGetListForUser(req.body);
+
             /** @type {Array<Chat>} */
             const chatList = await self.strategies.getListForUser(req.body);
-            return ChatRouterController.#convertToJson(chatList);
+            res.send(ChatRouterController.#convertToJson(chatList, "chatList"));
         }, req, res);
     }
 
     /**
-     *
      * @param {Array<ConvertToJson>} list
+     * @param {string} listName
      * @return {Object}
      */
-    static #convertToJson = function (list) {
+    static #convertToJson = function (list, listName) {
         /** @type {Object} */
-        let requestResult = {"chatList": []};
+        let requestResult = {};
+        requestResult[listName] = [];
         for(let i = 0; i < list.length; i++) {
             /** @type {ConvertToJson} */
             const element = list[i];
-            requestResult["chatList"].push(element.asJson());
+            requestResult[listName].push(element.asJson());
         }
         return requestResult;
     }
 
-
     /**
      * @param {Request} req
      * @param {Response} res
+     * @return {Object}
      */
     async getMessagesFromChat(req, res) {
         let self = this;
         return await PromiseWrap.asyncRouteSendWrap(async function() {
-            await self.rules.canGetMessagesFromChat(req.body);
+            await self.rules.canGetMessagesFromChat(req.body)
             /** @type {Array<ChatMessage>} */
             const messages = await self.strategies.getMessagesFromChat(req.body);
-            return ChatRouterController.#convertToJson(messages);
+            res.send(ChatRouterController.#convertToJson(messages, "messageList"));
         }, req, res);
     }
 }

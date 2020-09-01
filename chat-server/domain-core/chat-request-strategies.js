@@ -79,7 +79,7 @@ export class ChatRequestStrategies {
         return await PromiseWrap.asyncWrap(async function() {
             /** @type {number} */
             const userId = json["user"];
-            return await self.messageRepository.findAllForUser(userId);
+            return await self.chatRepository.findAllForUser(userId);
         }, true);
     }
 
@@ -92,7 +92,7 @@ export class ChatRequestStrategies {
         return await PromiseWrap.asyncWrap(async function() {
             /** @type {number} */
             const chatId = json["chat"];
-            return await self.chatRepository.getMessages(chatId);
+            return await self.messageRepository.getMessages(chatId);
         }, true);
     }
 }

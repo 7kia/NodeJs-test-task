@@ -1,116 +1,139 @@
-import {expect} from 'chai';
+import {expect, should as shouldFunc} from 'chai';
 import chai from "chai";
 import chaiHttp from "chai-http";
 import {describe, it} from "mocha";
+import {sprintf} from "sprintf-js";
 chai.use(chaiHttp);
+/** @type {Chai.Should} */
+const should = shouldFunc();
 
 describe("Класс ServerApiController. Генерирует REST-ответы чат сервера.", () => {
     /** @type {string} */
     const SERVER_ADDRESS = "http://localhost:9000/";
+
+    /**
+     * @param {string} url
+     * @param {Object} sendData
+     * @return {Promise<request.Response>}
+     */
+    async function generatePostRequest(url, sendData) {
+        /** @type {request.Response} */
+        const response = await chai.request(SERVER_ADDRESS)
+            .post(url)
+            .set('content-type', 'application/json')
+            .send(sendData);
+        return response;
+    }
+
+    /**
+     * @param {string} message
+     * @return {string}
+     */
+    function generateErrorMessage(message) {
+        return sprintf('{"errorMessage":"%s"}', message);
+    }
+
     /**
      * @param {string} username
      * @return {number}
      */
-    function deleteUser(username) {
-        chai.request(SERVER_ADDRESS)
-            .get("users/delete")
-            .type("json")
-            .send({
+    async function deleteUser(username) {
+        /** @type {request.Response} */
+        const response = await generatePostRequest(
+            "users/delete",
+            {
                 "username": username
-            });
+            }
+        );
+        response.should.have.status(200);
+    }
+
+    /**
+     * @param {string} username
+     * @return {number}
+     */
+    async function addUser(username) {
+        /** @type {request.Response} */
+        const response = await generatePostRequest(
+            "users/add",
+            {
+                "username": username
+            }
+        );
+        expect(response.error).is.eq(false);
+        expect(response.body.id).is.a("number").and.is.not.undefined;
+        return response.body.id;
     }
     describe("Добавить нового пользователя", () => {
         /** @type {string} */
         const USER_NAME = "user_1";
         it("Если такого пользователя нет, то он добавляется. " +
-        "Возвращается id нового пользователя.", (done) => {
-            chai.request(SERVER_ADDRESS)
-                .post("users/add")
-                .type("json")
-                .send({
+        "Возвращается id нового пользователя.", async () => {
+            /** @type {request.Response} */
+            const response = await generatePostRequest(
+                "users/add",
+                {
                     "username": USER_NAME
-                }).end(function (err, res) {
-                    expect(err).to.be.null;
-
-                    expect(res).to.have.status(200);
-                    expect(res).to.be.json;
-                    expect(JSON.parse(res.body).id).is.a("number");
-                    done();
-                });
+                }
+            );
+            expect(response.error).is.eq(false);
+            expect(response.status).is.eq(200);
+            expect(response.body).is.an("Object");
+            expect(response.body.id).is.a("number").is.greaterThan(0);
+            await deleteUser(USER_NAME);
         })
         it("Если пользователь с указанным именем существует, то возвращается " +
-            "сообщение о существовании пользователя и пользователь не добавляется", (done) => {
-            chai.request(SERVER_ADDRESS)
-                .post("users/add")
-                .type("json")
-                .send({
+            "сообщение о существовании пользователя и пользователь не добавляется", async () => {
+            /** @type {string} */
+            const USER_NAME = "user_1_";
+            await addUser(USER_NAME);
+            /** @type {request.Response} */
+            const response = await generatePostRequest(
+                "users/add",
+                {
                     "username": USER_NAME
-                }).end(function (err, res) {
-                    expect(err).to.be.not.null;
-
-                    expect(res).to.have.status(500);
-                    expect(res).to.be.json;
-                    expect(JSON.parse(res.body).errorMessage).is.eq(
-                        "User with name=" + USER_NAME + " exist."
-                    );
-                    done();
-                });
+                }
+            );
+            expect(response.error).is.instanceOf(Error);
+            expect(response.error.status).is.eq(500);
+            expect(response.error.text).is.eq(
+                generateErrorMessage(sprintf("User with name %s exist", USER_NAME))
+            );
+            await deleteUser(USER_NAME);
         })
-        deleteUser(USER_NAME);
+
     })
-    /*
-     *  Удаление добавлено для тестирования
-     */
-    /**
-     * @param {string} username
-     * @return {number}
-     */
-    function addUser(username) {
-        /** @type {number} */
-        let result = 0;
-        chai.request(SERVER_ADDRESS)
-            .post("users/add")
-            .type("json")
-            .send({
-                "username": username
-            }).then(function (res) {
-            result = JSON.parse(res.body).id;
-        });
-        return result;
-    }
     describe("Удалить пользователя", () => {
-        /** @type {string} */
-        const USER_NAME = "testUser1";
-        addUser(USER_NAME);
-        it("Если такой пользователь существует, то он удаляется.", (done) => {
-            chai.request(SERVER_ADDRESS)
-                .get("users/delete")
-                .type("json")
-                .send({
+        it("Если такой пользователь существует, то он удаляется.", async () => {
+            /** @type {string} */
+            const USER_NAME = "testUser1";
+            await addUser(USER_NAME);
+            /** @type {request.Response} */
+            const response = await generatePostRequest(
+                "users/delete",
+                {
                     "username": USER_NAME
-                }).end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res).to.have.status(200);
-                    done();
-                });
+                }
+            );
+            expect(response.error).is.eq(false);
+            expect(response.status).is.eq(200);
         })
         it("Если пользователя с указанным именем не существует, то возвращается " +
-            "сообщение об отсутствии пользователя.", (done) => {
-            chai.request(SERVER_ADDRESS)
-                .get("users/delete")
-                .type("json")
-                .send({
+            "сообщение об отсутствии пользователя.", async () => {
+            /** @type {null} */
+            const USER_NAME = null;
+            /** @type {request.Response} */
+            const response = await generatePostRequest(
+                "users/delete",
+                {
                     "username": USER_NAME
-                }).end(function (err, res) {
-                    expect(err).to.be.not.null;
-
-                    expect(res).to.have.status(500);
-                    expect(res).to.be.json;
-                    expect(JSON.parse(res.body).errorMessage).is.eq(
-                        "User with name=" + USER_NAME + " not exist."
-                    );
-                    done();
-                });
+                }
+            );
+            expect(response.error).is.instanceOf(Error);
+            expect(response.error.status).is.eq(500);
+            expect(response.error.text).is.eq(
+                generateErrorMessage(sprintf("User with {\"username\":"+ USER_NAME+"} not exist", USER_NAME))
+            );
         })
     })
 
@@ -119,172 +142,173 @@ describe("Класс ServerApiController. Генерирует REST-ответы
      * @param {string} chatName
      * @param {Array<number>} users
      */
-    function addChat(chatName, users) {
-        /** @type {number} */
-        let result = 0;
-        chai.request(SERVER_ADDRESS)
-            .post("chats/add")
-            .type("json")
-            .send({
+    async function addChat(chatName, users) {
+        /** @type {request.Response} */
+        const response = await generatePostRequest(
+            "chats/add",
+            {
                 "name": chatName, "users": users
-            }).then(function (err, res) {
-                result = JSON.parse(res.body).id;
-            });
-        return result;
+            }
+        );
+        expect(response.error).is.eq(false);
+        expect(response.body.id).is.a("number").and.is.not.undefined;
+        return response.body.id;
     }
 
     /**
      *
      * @param {number} chatId
      */
-    function deleteChat(chatId) {
-        chai.request(SERVER_ADDRESS)
-            .get("chats/delete")
-            .type("json")
-            .send({
+    async function deleteChat(chatId) {
+        /** @type {request.Response} */
+        const response = await generatePostRequest(
+            "chats/delete",
+            {
                 "id": chatId
-            });
+            }
+        );
+        response.should.have.status(200);
     }
     describe("Создать новый чат между пользователями", () => {
-        /** @type {string} */
-        const USER_NAME_1 = "test1";
-        /** @type {string} */
-        const USER_NAME_2 = "test2";
-        /** @type {number} */
-        const USER_ID_1 = addUser(USER_NAME_1);
-        /** @type {number} */
-        const USER_ID_2 = addUser(USER_NAME_2);
-        /** @type {string} */
-        const CHAT_NAME = "user_1";
-        /** @type {number} */
-        let testChatId = 0;
+        before(async () => {
+            /** @type {string} */
+            this.USER_NAME_1 = "test1";
+            /** @type {string} */
+            this.USER_NAME_2 = "test2";
+            /** @type {number} */
+            this.USER_ID_1 = await addUser(this.USER_NAME_1);
+            /** @type {number} */
+            this.USER_ID_2 = await addUser(this.USER_NAME_2);
+            /** @type {string} */
+            this.CHAT_NAME = "chat_1";
+            /** @type {Array<number>} */
+            this.USERS = [this.USER_ID_1, this.USER_ID_2];
+
+        })
         describe("Чат создается и возвращается id нового чата, если", () => {
             it("1) Указанные пользователи существуют;\n" +
                 "2) Не существует чата с указанными пользователями;" +
-                "3) Имя чата не пустое", (done) => {
-                chai.request(SERVER_ADDRESS)
-                    .post("chats/add")
-                    .type("json")
-                    .send({
-                        "name": CHAT_NAME, "users": [USER_ID_1, USER_ID_2]
-                    }).then(function (err, res) {
-                        expect(err).to.be.null;
-
-                        expect(res).to.have.status(200);
-                        expect(res).to.be.json;
-                        testChatId = JSON.parse(res.body).id;
-                        expect(testChatId).is.a("number");
-
-                        done();
-                    });
+                "3) Имя чата не пустое", async () => {
+                /** @type {request.Response} */
+                const response = await generatePostRequest(
+                    "chats/add",
+                    {
+                        "name": this.CHAT_NAME, "users": this.USERS
+                    }
+                );
+                expect(response.error).is.eq(false);
+                
+                expect(response.status).is.eq(200);
+                expect(response.body).is.an("Object");
+                expect(response.body.id).is.a("number").is.greaterThan(0);
             })
-            deleteChat(testChatId);
+
         })
-        describe("Чат не создается и возвращается сообщение с ошибкой, если", () => {
-            /** @type {number} */
-            const USER_ID_3 = addUser("test3");
-            /** @type {string} */
-            const CHAT_NAME_2 = "testChat2";
-            /** @type {Array<number>} */
-            const USERS = [USER_ID_1, USER_ID_2, USER_ID_3];
-            /** @type {number} */
-            const chatId = addChat(CHAT_NAME_2, USERS);
-            it("Хотя бы один из пользователей не существует", (done) => {
+        describe("Чат не создается и возвращается сообщение с ошибкой, если", async () => {
+            before(async () => {
                 /** @type {number} */
-                const NOT_EXIST_USER = 0;
-                chai.request(SERVER_ADDRESS)
-                    .post("chats/add")
-                    .type("json")
-                    .send({
-                            "name": CHAT_NAME, "users": [USER_ID_1, NOT_EXIST_USER]
-                    }).then(function (err, res) {
-                        expect(err).to.be.not.null;
+                this.USER_ID_3 = await addUser("test3");
+                /** @type {string} */
+                this.CHAT_NAME_2 = "testChat2";
+                /** @type {Array<number>} */
+                this.USERS = [this.USER_ID_1, this.USER_ID_2, this.USER_ID_3];
+            });
 
-                        expect(res).to.have.status(500);
-                        expect(res).to.be.json;
-                        expect(JSON.parse(res.body).errorMessage).is.eq(
-                            "Chat \"${CHAT_NAME}\" not create. User with name=${NOT_EXIST_USER} not exist."
-                        );
-                        done();
-                    });
+            it("Хотя бы один из пользователей не существует", async () => {
+                /** @type {number} */
+                const NOT_EXIST_USER = -1;
+                /** @type {request.Response} */
+                const response = await generatePostRequest(
+                    "chats/add",
+                    {
+                        "name": this.CHAT_NAME_2, "users": [this.USER_ID_1, NOT_EXIST_USER]
+                    }
+                );
+                expect(response.error).is.instanceOf(Error);
+                expect(response.error.status).is.eq(500);
+                expect(response.error.text).is.eq(
+                    generateErrorMessage(
+                        sprintf("Users [%i] not exist", NOT_EXIST_USER)
+                    )
+                );
             })
-            it("Существует чат с указанными пользователями", (done) => {
-                chai.request(SERVER_ADDRESS)
-                    .post("chats/add")
-                    .type("json")
-                    .send({
-                        "name": CHAT_NAME_2, "users": USERS
-                    }).then(function (err, res) {
-                        expect(err).to.be.not.null;
+            it("Существует чат с указанными пользователями", async () => {
+                /** @type {number} */
+                const chatId = await addChat(this.CHAT_NAME_2, this.USERS);
+                /** @type {request.Response} */
+                const response = await generatePostRequest(
+                    "chats/add",
+                    {
+                        "name": this.CHAT_NAME_2, "users": this.USERS
+                    }
+                );
+                expect(response.error).is.instanceOf(Error);
+                expect(response.error.status).is.eq(500);
+                expect(response.error.text).is.eq(
+                    generateErrorMessage(sprintf("Chat with {\"users\":%j} exist", this.USERS))
+                );
 
-                        expect(res).to.have.status(500);
-                        expect(res).to.be.json;
-                        expect(JSON.parse(res.body).errorMessage).is.eq(
-                            "Chat with users=${USERS} exist."
-                        );
-                        done();
-                    });
+                await deleteChat(chatId);
             })
-            it("Имя чата пустое", (done) => {
-                chai.request(SERVER_ADDRESS)
-                    .post("chats/add")
-                    .type("json")
-                    .send({
-                        "name": null, "users": USERS
-                    }).then(function (err, res) {
-                        expect(err).to.be.not.null;
+            it("Имя чата пустое", async () => {
+                /** @type {request.Response} */
+                const response = await generatePostRequest(
+                    "chats/add",
+                    {
+                        "name": "", "users": this.USERS
+                    }
+                );
+                expect(response.error).is.instanceOf(Error);
+                expect(response.error.status).is.eq(500);
+                expect(response.error.text).is.eq(
+                    generateErrorMessage("Chat name is empty")
+                );
+            })
 
-                        expect(res).to.have.status(500);
-                        expect(res).to.be.json;
-                        expect(JSON.parse(res.body).errorMessage).is.eq(
-                            "Chat name is empty."
-                        );
-                        done();
-                    });
-            })
-            deleteChat(chatId);
         })
 
-        deleteUser(USER_NAME_1);
-        deleteUser(USER_NAME_2);
+        after(async () => {
+            await deleteUser(this.USER_NAME_1);
+            await deleteUser(this.USER_NAME_2);
+        });
     })
 
     describe("Отправить сообщение в чат от лица пользователя", () => {
-        /** @type {string} */
-        const USER_NAME_1 = "test4";
-        /** @type {string} */
-        const USER_NAME_2 = "test5";
-        /** @type {number} */
-        const USER_ID = addUser(USER_NAME_1);
-        /** @type {number} */
-        const USER_ID_2 = addUser(USER_NAME_2);
-        /** @type {string} */
-        const CHAT_NAME = "testChat3";
-        /** @type {number} */
-        const CHAT_ID = addChat(CHAT_NAME, [USER_ID, USER_ID_2]);
-        /** @type {string} */
-        const MESSAGE_TEXT = "msg1";
+        before(async () => {
+            /** @type {string} */
+            this.USER_NAME_1 = "test4";
+            /** @type {string} */
+            this.USER_NAME_2 = "test5";
+            /** @type {number} */
+            this.USER_ID = await addUser(this.USER_NAME_1);
+            /** @type {number} */
+            this.USER_ID_2 = await addUser(this.USER_NAME_2);
+            /** @type {string} */
+            this.CHAT_NAME = "testChat3";
+            /** @type {number} */
+            this.CHAT_ID = await addChat(this.CHAT_NAME, [this.USER_ID, this.USER_ID_2]);
+            /** @type {string} */
+            this.MESSAGE_TEXT = "msg1";
+        })
+
 
 
         describe("Создает сообщение и возвращает его id, если:", () => {
             it("1) Указанный чат существует;\n" +
                 "2) Указанный пользователь(автор) существует;\n" +
-                "3) Сообщение не является пустым", (done) => {
-                chai.request(SERVER_ADDRESS)
-                    .post("chats/messages/add")
-                    .type("json")
-                    .send({
-                        "chat": CHAT_ID, "author": USER_ID, "text": MESSAGE_TEXT
-                    }).then(function (err, res) {
-                    expect(err).to.be.null;
+                "3) Сообщение не является пустым", async () => {
+                /** @type {request.Response} */
+                const response = await generatePostRequest(
+                    "chats/messages/add",
+                    {
+                        "chat": this.CHAT_ID, "author": this.USER_ID, "text": this.MESSAGE_TEXT
+                    }
+                );
+                expect(response.error).is.eq(false);
 
-                    expect(res).to.have.status(200);
-                    expect(res).to.be.json;
-                    /** @type {number} */
-                    const messageId = JSON.parse(res.body).id;
-                    expect(messageId).is.a("number");
-                    done();
-                });
+                expect(response.status).is.eq(200);
+                expect(response.body).is.an("Object");
+                expect(response.body.id).is.a("number").is.greaterThan(0);
             })
         })
         describe("Возвращает сообщение с ошибкой, если", () => {
@@ -292,168 +316,149 @@ describe("Класс ServerApiController. Генерирует REST-ответы
             const NOT_EXIST_CHAT_ID = -1;
             /** @type {number} */
             const NOT_EXIST_USER = -1;
-            it("Указанного чата не существует", (done) => {
-                chai.request(SERVER_ADDRESS)
-                    .post("chats/messages/add")
-                    .type("json")
-                    .send({
-                        "chat": NOT_EXIST_CHAT_ID, "author": USER_ID, "text": MESSAGE_TEXT
-                    }).then(function (err, res) {
-                        expect(err).to.be.null;
-
-                        expect(res).to.have.status(500);
-                        expect(res).to.be.json;
-                        expect(JSON.parse(res.body).errorMessage).is.eq(
-                            "Chat with id=${NOT_EXIST_CHAT_ID} not exist."
-                        );
-                        done();
-                    });
-                })
-            it("Указанного пользователя не существует", (done) => {
-                chai.request(SERVER_ADDRESS)
-                    .post("chats/messages/add")
-                    .type("json")
-                    .send({
-                        "chat": CHAT_ID, "author": NOT_EXIST_USER, "text": MESSAGE_TEXT
-                    }).then(function (err, res) {
-                    expect(err).to.be.null;
-
-                    expect(res).to.have.status(500);
-                    expect(res).to.be.json;
-                    expect(JSON.parse(res.body).errorMessage).is.eq(
-                        "User with id=${NOT_EXIST_USER} not exist."
-                    );
-                    done();
-                });
+            it("Указанного чата не существует", async () => {
+                /** @type {request.Response} */
+                const response = await generatePostRequest(
+                    "chats/messages/add",
+                    {
+                        "chat": NOT_EXIST_CHAT_ID, "author": this.USER_ID, "text": this.MESSAGE_TEXT
+                    }
+                );
+                expect(response.error).is.instanceOf(Error);
+                expect(response.error.status).is.eq(500);
+                expect(response.error.text).is.eq(
+                    generateErrorMessage(sprintf(
+                        "Chat with id %i not exist", NOT_EXIST_CHAT_ID
+                    ))
+                );
             })
-            it("Сообщение пустое", (done) => {
-                chai.request(SERVER_ADDRESS)
-                    .post("chats/messages/add")
-                    .type("json")
-                    .send({
-                        "chat": CHAT_ID, "author": USER_ID, "text": ""
-                    }).then(function (err, res) {
-                        expect(err).to.be.null;
-
-                        expect(res).to.have.status(500);
-                        expect(res).to.be.json;
-                        expect(JSON.parse(res.body).errorMessage).is.eq(
-                            "User with id=${NOT_EXIST_USER} try send empty message."
-                        );
-                        done();
-                    });
+            it("Указанного пользователя не существует", async () => {
+                /** @type {request.Response} */
+                const response = await generatePostRequest(
+                    "chats/messages/add",
+                    {
+                        "chat": this.CHAT_ID, "author": NOT_EXIST_USER, "text": this.MESSAGE_TEXT
+                    }
+                );
+                expect(response.error).is.instanceOf(Error);
+                expect(response.error.status).is.eq(500);
+                expect(response.error.text).is.eq(
+                    generateErrorMessage(
+                        sprintf(
+                        "User with {\"id\":%i}  not exist", NOT_EXIST_USER
+                    ))
+                );
             })
-            it("Если содержится несколько ошибок, указываются все", (done) => {
-                chai.request(SERVER_ADDRESS)
-                    .post("chats/messages/add")
-                    .type("json")
-                    .send({
-                        "chat": NOT_EXIST_CHAT_ID, "author": NOT_EXIST_USER, "text": ""
-                    }).then(function (err, res) {
-                    expect(err).to.be.null;
-
-                    expect(res).to.have.status(500);
-                    expect(res).to.be.json;
-                    expect(JSON.parse(res.body).errorMessage).is.eq(
-                        "Chat with id=${NOT_EXIST_CHAT_ID} not exist." +
-                        "User with id=${NOT_EXIST_USER} not exist." +
-                        "User with id=${NOT_EXIST_USER} try send empty message."
-                    );
-                    done();
-                });
-            });
+            it("Сообщение пустое", async () => {
+                /** @type {request.Response} */
+                const response = await generatePostRequest(
+                    "chats/messages/add",
+                    {
+                        "chat": this.CHAT_ID, "author": this.USER_ID, "text": ""
+                    }
+                );
+                expect(response.error).is.instanceOf(Error);
+                expect(response.error.status).is.eq(500);
+                expect(response.error.text).is.eq(
+                    generateErrorMessage(sprintf(
+                        "User with id %i try send empty message", this.USER_ID
+                    ))
+                );
+            })
         })
-        deleteUser(USER_NAME_1);
-        deleteUser(USER_NAME_2);
-        deleteChat(CHAT_ID);
+
+        after(async () => {
+            await deleteUser(this.USER_NAME_1);
+            await deleteUser(this.USER_NAME_2);
+            await deleteChat(this.CHAT_ID);
+        })
     })
 
     /**
-     *
-     * @param {JSON} jsonElementElement
+     * @param {JSON} element
      */
-    function checkChatListElementStructure(jsonElementElement) {
-        expect(jsonElementElement).to.have.property("id");
-        expect(jsonElementElement.id).to.be.a("number");
-        expect(jsonElementElement).to.have.property("name");
-        expect(jsonElementElement.name).to.be.a("string");
-        expect(jsonElementElement).to.have.property("users");
-        expect(jsonElementElement.users).to.be.a("Array");
-        expect(jsonElementElement).to.have.property("created_at");
-        expect(jsonElementElement.created_at).to.be.a("string");
+    function checkChatListElementStructure(element) {
+        element.should.have.property("id").is.a("number");
+        element.should.have.property("name").is.a("string");
+        element.should.have.property("users").is.a("Array");
+        element.should.have.property("createdAt").is.a("string");
     }
 
     describe("Получить список чатов конкретного пользователя", () => {
-        /** @type {string} */
-        const USER_NAME_1 = "test6";
-        /** @type {string} */
-        const USER_NAME_2 = "test7";
-        /** @type {string} */
-        const USER_NAME_3 = "test8";
-        /** @type {number} */
-        const USER_ID = addUser(USER_NAME_1);
-        /** @type {number} */
-        const USER_ID_2 = addUser(USER_NAME_2);
-        /** @type {number} */
-        const USER_ID_3 = addUser(USER_NAME_3);
-        /** @type {string} */
-        const CHAT_NAME = "testChat5";
-        /** @type {number} */
-        const CHAT_ID_1 = addChat(CHAT_NAME, [USER_ID, USER_ID_2]);
-        /** @type {number} */
-        const CHAT_ID_2 = addChat(CHAT_NAME, [USER_ID, USER_ID_3]);
+        before(async () => {
+            /** @type {string} */
+            this.USER_NAME_1 = "test6";
+            /** @type {string} */
+            this.USER_NAME_2 = "test7";
+            /** @type {string} */
+            this.USER_NAME_3 = "test8";
+            /** @type {number} */
+            this.USER_ID = await addUser(this.USER_NAME_1);
+            /** @type {number} */
+            this.USER_ID_2 = await addUser(this.USER_NAME_2);
+            /** @type {number} */
+            this.USER_ID_3 = await addUser(this.USER_NAME_3);
+            /** @type {string} */
+            this.CHAT_NAME = "testChat5";
+            /** @type {number} */
+            this.CHAT_ID_1 = await addChat(this.CHAT_NAME, [this.USER_ID, this.USER_ID_2]);
+            /** @type {number} */
+            this.CHAT_ID_2 = await addChat(this.CHAT_NAME, [this.USER_ID, this.USER_ID_3]);
+        })
+
         describe("Возвращает cписок всех чатов со всеми полями, отсортированный " +
             "по времени создания последнего сообщения в чате (от позднего к раннему)," +
             " если", () => {
-            it("Указанный пользователь существует", (done) => {
-                chai.request(SERVER_ADDRESS)
-                    .post("chats/get")
-                    .type("json")
-                    .send({
-                        "user": USER_ID
-                    }).then(function (err, res) {
-                        expect(err).to.be.null;
+            it("Указанный пользователь существует", async () => {
+                /** @type {request.Response} */
+                const response = await generatePostRequest(
+                    "chats/get",
+                    {
+                        "user": this.USER_ID
+                    }
+                );
+                expect(response.error).is.eq(false);
 
-                        expect(res).to.have.status(200);
-                        expect(res).to.be.json;
-                        /** @type {JSON} */
-                        const json = JSON.parse(res.body);
-                        expect(json).to.have.property("chatList");
-                        expect(json["chatList"]).is.a("Array");
-                        checkChatListElementStructure(json["chatList"][0]);
-                        checkChatListElementStructure(json["chatList"][1]);
-                        expect(json["chatList"][0].id).is.eq(CHAT_ID_1);
-                        expect(json["chatList"][1].id).is.eq(CHAT_ID_2);
-                        done();
-                    });
+                expect(response.status).is.eq(200);
+                expect(response.body).is.an("Object");
+                /** @type {JSON} */
+                const json = response.body;
+                json.should.have.property("chatList").is.a("Array");
+                checkChatListElementStructure(json["chatList"][0]);
+                checkChatListElementStructure(json["chatList"][1]);
+                expect(json["chatList"][0].id).is.eq(this.CHAT_ID_1);
+                expect(json["chatList"][1].id).is.eq(this.CHAT_ID_2);
             })
         })
         describe("Возвращает сообщение с ошибкой, если", () => {
-            it("Указанного пользователя не существует", (done) => {
+            it("Указанного пользователя не существует", async () => {
                 /** @type {number} */
                 const NOT_EXIST_USER = -1;
-                chai.request(SERVER_ADDRESS)
-                    .post("chats/get")
-                    .type("json")
-                    .send({
+                /** @type {request.Response} */
+                const response = await generatePostRequest(
+                    "chats/get",
+                    {
                         "user": NOT_EXIST_USER
-                    }).then(function (err, res) {
-                        expect(err).to.be.null;
-
-                        expect(res).to.have.status(500);
-                        expect(res).to.be.json;
-                        expect(JSON.parse(res.body).errorMessage).is.eq(
-                            "User with id=${NOT_EXIST_USER} not exist."
-                        );
-                        done();
-                    });
+                    }
+                );
+                expect(response.error).is.instanceOf(Error);
+                expect(response.error.status).is.eq(500);
+                expect(response.error.text).is.eq(
+                    generateErrorMessage(sprintf(
+                        "User with {\"id\":%i} not exist", NOT_EXIST_USER
+                    ))
+                );
             })
         })
-        deleteUser(USER_NAME_1);
-        deleteUser(USER_NAME_2);
-        deleteUser(USER_NAME_3);
-        deleteChat(CHAT_ID_1);
-        deleteChat(CHAT_ID_2);
+
+        after(async () => {
+            await deleteUser(this.USER_NAME_1);
+            await deleteUser(this.USER_NAME_2);
+            await deleteUser(this.USER_NAME_3);
+            await deleteChat(this.CHAT_ID_1);
+            await deleteChat(this.CHAT_ID_2);
+        })
+
     })
     describe("Получить список сообщений в конкретном чате", () => {
         /**
@@ -462,104 +467,119 @@ describe("Класс ServerApiController. Генерирует REST-ответы
          * @param {string} message
          * @return {number}
          */
-        function addMessage(chatId, userId, message) {
-            /** @type {number} */
-            let result = 0;
-            chai.request(SERVER_ADDRESS)
-                .post("chats/messages/add")
-                .type("json")
-                .send({
+        async function addMessage(chatId, userId, message) {
+            /** @type {request.Response} */
+            const response = await generatePostRequest(
+                "chats/messages/add",
+                {
                     "chat": chatId, "author": userId, "text": message
-                }).then(function (err, res) {
-                    result = JSON.parse(res.body).id;
-                });
-            return result;
+                }
+            );
+            expect(response.error).is.eq(false);
+            expect(response.body.id).is.a("number").and.is.not.undefined;
+            return response.body.id;
         }
 
         /**
          * @param {number} id
          */
-        function deleteMessage(id) {
-            chai.request(SERVER_ADDRESS)
-                .get("chats/messages/delete")
-                .type("json")
-                .send({
+        async function deleteMessage(id) {
+            /** @type {request.Response} */
+            const response = await generatePostRequest(
+                "chats/messages/delete",
+                {
                     "id": id
-                }).then(function (err, res) {
-                    expect(res).to.have.status(200);
-                });
+                }
+            );
+            response.should.have.status(200);
         }
-        /** @type {string} */
-        const USER_NAME_1 = "test9";
-        /** @type {string} */
-        const USER_NAME_2 = "test10";
-        /** @type {number} */
-        const USER_ID = addUser(USER_NAME_1);
-        /** @type {number} */
-        const USER_ID_2 = addUser(USER_NAME_2);
-        /** @type {string} */
-        const CHAT_NAME = "testChat7";
-        /** @type {number} */
-        const CHAT_ID = addChat(CHAT_NAME, [USER_ID, USER_ID_2]);
-        /** @type {string} */
-        const MESSAGE_TEXT_1 = "msg1";
-        /** @type {string} */
-        const MESSAGE_TEXT_2 = "msg2";
-        /** @type {number} */
-        const MESSAGE_ID_1 = addMessage(CHAT_ID, USER_ID, MESSAGE_TEXT_1);
-        /** @type {number} */
-        const MESSAGE_ID_2 = addMessage(CHAT_ID, USER_ID, MESSAGE_TEXT_2);
+
+
+
+        /**
+         * @param {JSON} element
+         */
+        function checkMessageListElementStructure(element) {
+            element.should.have.property("id").is.a("number");
+            element.should.have.property("chat").is.a("number");
+            element.should.have.property("author").is.a("number");
+            element.should.have.property("text").is.a("string");
+            element.should.have.property("createdAt").is.a("string");
+        }
         describe("Возвращает список всех сообщений чата со всеми полями, " +
             "отсортированный по времени создания сообщения (от раннего к " +
             "позднему), если", () => {
-            it("Указанный чат существует", (done) => {
-                chai.request(SERVER_ADDRESS)
-                    .post("chats/messages/get")
-                    .type("json")
-                    .send({
-                        "chat": CHAT_ID
-                    }).then(function (err, res) {
-                        expect(err).to.be.null;
+            before(async () => {
+                /** @private {string} */
+                this.USER_NAME_1 = "test9";
+                /** @private {string} */
+                this.USER_NAME_2 = "test10";
+                /** @private {number} */
+                this.USER_ID = await addUser(this.USER_NAME_1);
+                /** @private {number} */
+                this.USER_ID_2 = await addUser(this.USER_NAME_2);
+                /** @private {string} */
+                this.CHAT_NAME = "testChat7";
+                /** @private {number} */
+                this.EXISTING_CHAT_ID = await addChat(this.CHAT_NAME, [this.USER_ID, this.USER_ID_2]);
+                /** @private {string} */
+                this.MESSAGE_TEXT_1 = "msg1";
+                /** @private {string} */
+                this.MESSAGE_TEXT_2 = "msg2";
+                /** @private {number} */
+                this.MESSAGE_ID_1 = await addMessage(this.EXISTING_CHAT_ID, this.USER_ID, this.MESSAGE_TEXT_1);
+                /** @private {number} */
+                this.MESSAGE_ID_2 = await addMessage(this.EXISTING_CHAT_ID, this.USER_ID, this.MESSAGE_TEXT_2);
+            })
+            it("Указанный чат существует", async () => {
+                /** @type {request.Response} */
+                const response = await generatePostRequest(
+                    "chats/messages/get",
+                    {
+                        "chat": this.EXISTING_CHAT_ID
+                    }
+                );
+                expect(response.error).is.eq(false);
 
-                        expect(res).to.have.status(200);
-                        expect(res).to.be.json;
-                        /** @type {JSON} */
-                        const json = JSON.parse(res.body);
-                        expect(json).to.have.property("chatList");
-                        expect(json["chatList"]).is.a("Array");
-                        checkChatListElementStructure(json["chatList"][0]);
-                        checkChatListElementStructure(json["chatList"][1]);
-                        expect(json["chatList"][0].id).is.eq(CHAT_ID_1);
-                        expect(json["chatList"][1].id).is.eq(CHAT_ID_2);
-                        done();
-                    });
+                expect(response.status).is.eq(200);
+                expect(response.body).is.an("Object");
+                /** @type {JSON} */
+                const json = response.body;
+                json.should.have.property("messageList").is.a("Array");
+                checkMessageListElementStructure(json["messageList"][0]);
+                checkMessageListElementStructure(json["messageList"][1]);
+                expect(json["messageList"][0].id).is.eq(this.MESSAGE_ID_1);
+                expect(json["messageList"][1].id).is.eq(this.MESSAGE_ID_2);
+            })
+            after(async () => {
+                await deleteMessage(this.MESSAGE_ID_1);
+                await deleteMessage(this.MESSAGE_ID_2);
+                await deleteUser(this.USER_NAME_1);
+                await deleteUser(this.USER_NAME_2);
+                await deleteChat(this.EXISTING_CHAT_ID);
             })
         })
         describe("Возвращает сообщение с ошибкой, если", () => {
-            it("Указанного чата не существует", (done) => {
+            it("Указанного чата не существует", async () => {
                 /** @type {number} */
                 const NOT_EXIST_CHAT = -1;
-                chai.request(SERVER_ADDRESS)
-                    .post("chats/messages/get")
-                    .type("json")
-                    .send({
+                /** @type {request.Response} */
+                const response = await generatePostRequest(
+                    "chats/messages/get",
+                    {
                         "chat": NOT_EXIST_CHAT
-                    }).then(function (err, res) {
-                        expect(err).to.be.null;
-
-                        expect(res).to.have.status(500);
-                        expect(res).to.be.json;
-                        expect(JSON.parse(res.body).errorMessage).is.eq(
-                            "Chat with id=${NOT_EXIST_CHAT} not exist."
-                        );
-                        done();
-                    });
+                    }
+                );
+                expect(response.error).is.instanceOf(Error);
+                expect(response.error.status).is.eq(500);
+                expect(response.error.text).is.eq(
+                    generateErrorMessage(sprintf(
+                        "Chat with id %i not exist", NOT_EXIST_CHAT
+                    ))
+                );
             })
         })
-        deleteMessage(MESSAGE_ID_1);
-        deleteMessage(MESSAGE_ID_2);
-        deleteUser(USER_NAME_1);
-        deleteUser(USER_NAME_2);
-        deleteChat(CHAT_ID);
+
+
     })
 })

@@ -24,7 +24,7 @@ export class UserRequestRules {
                 throw new Error(ErrorMessageGenerator.generateUserExist(username));
             }
             return true;
-        }, true);
+        }, true, true);
     }
 
     /**
@@ -37,10 +37,10 @@ export class UserRequestRules {
             /** @type {string} */
             const username = json["username"];
             if (!await UserRequestRules.existUser({"username": username}, self.userRepository)) {
-                throw new Error(ErrorMessageGenerator.generateUserNotExist(username));
+                throw new Error(ErrorMessageGenerator.generateUserNotExist({"username": username}));
             }
             return true;
-        }, true);
+        }, true, true);
     }
 
     /**
@@ -53,6 +53,6 @@ export class UserRequestRules {
             /** @type {User} */
             const user = await userRepository.find(fields);
             return user !== null;
-        }, true);
+        }, true, true);
     }
 }

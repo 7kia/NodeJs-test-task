@@ -17,14 +17,13 @@ async function initRoute() {
     /** @type {ChatRouterController} */
     let controller = chatServerBuilderDirector.createChatRouterController();
 
-
     chatRouter.post('/add', async function(req, res) {
         return await PromiseWrap.asyncWrap(async function() {
             return await controller.add(req, res);
         }, true);
     });
 
-    chatRouter.get('/delete', async function(req, res) {
+    chatRouter.post('/delete', async function(req, res) {
         return await PromiseWrap.asyncWrap(async function() {
             await controller.delete(req, res);
         }, true);
@@ -35,7 +34,7 @@ async function initRoute() {
             return await controller.addMessageToChat(req, res);
         }, true);
     });
-    chatRouter.get('/messages/delete', async function(req, res) {
+    chatRouter.post('/messages/delete', async function(req, res) {
         return await PromiseWrap.asyncWrap(async function() {
             await controller.deleteMessageToChat(req, res);
         }, true);

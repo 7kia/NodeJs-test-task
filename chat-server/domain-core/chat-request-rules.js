@@ -1,5 +1,4 @@
 import {PromiseWrap} from "../helper-modules/promise-wrap";
-import {sprintf} from "sprintf-js";
 import {UserRequestRules} from "./user-request-rules";
 import {ErrorMessageGenerator} from "../helper-modules/error-message-generator";
 
@@ -30,6 +29,9 @@ export class ChatRequestRules {
         return await PromiseWrap.asyncWrap(async function() {
             /** @type {boolean} */
             const chatNameNotEmpty = ChatRequestRules.#chatNameNotEmpty(json);
+            if (!chatNameNotEmpty) {
+                throw new Error(ErrorMessageGenerator.chatNameEmpty());
+            }
             /** @type {boolean} */
             const usersExist = await ChatRequestRules.#usersExist(
                 json, self.userRepository
@@ -38,8 +40,11 @@ export class ChatRequestRules {
             const chatWithUsersNotExist = await ChatRequestRules.#chatWithUsersNotExist(
                 json, self.chatRepository
             );
+            if (!chatWithUsersNotExist) {
+                throw new Error(ErrorMessageGenerator.generateChatExist({"users": json["users"]}));
+            }
             return chatNameNotEmpty && usersExist && chatWithUsersNotExist;
-        }, true);
+        }, true, true);
     }
 
     /**
@@ -96,8 +101,8 @@ export class ChatRequestRules {
         json, chatRepository
     ) {
         return await PromiseWrap.asyncWrap(async function() {
-            return !await chatRepository.find({"users": json["users"]})
-        }, true);
+            return await chatRepository.find({"users": json["users"]}) === null;
+        }, true, true);
     }
 
     /**
@@ -113,7 +118,7 @@ export class ChatRequestRules {
                 throw new Error(ErrorMessageGenerator.generateChatNotExist(id));
             }
             return true;
-        }, true);
+        }, true, true);
     }
 
     /**
@@ -126,7 +131,7 @@ export class ChatRequestRules {
             /** @type {Chat} */
             const chat = await chatRepository.find(fields);
             return chat !== null;
-        }, true);
+        }, true, true);
     }
 
     /**
@@ -140,15 +145,23 @@ export class ChatRequestRules {
             const chatExist = await ChatRequestRules.#existChat(
                 {"id": json["chat"]}, self.chatRepository
             );
+            if (!chatExist) {
+                throw new Error(ErrorMessageGenerator.generateChatNotExist(json["chat"]));
+            }
             /** @type {boolean} */
             const authorExist = await UserRequestRules.existUser(
                 {"id": json["author"]}, self.userRepository
             );
+            if (!authorExist) {
+                throw new Error(ErrorMessageGenerator.generateUserNotExist({"id": json["author"]}));
+            }
             /** @type {boolean} */
             const messageNotEmpty = await ChatRequestRules.#messageNotEmpty(json);
-
+            if (!messageNotEmpty) {
+                throw new Error(ErrorMessageGenerator.generateTrySendEmptyMessage());
+            }
             return chatExist && authorExist && messageNotEmpty;
-        }, true);
+        }, true, true);
     }
 
     /**
@@ -160,13 +173,11 @@ export class ChatRequestRules {
         return await PromiseWrap.asyncWrap(async function() {
             /** @type {number} */
             const id = json["id"];
-            if (!await ChatRequestRules.#existChat({"id": id}, self.chatRepository)) {
-                throw new Error(sprintf(
-                    ErrorMessageGenerator.generateChatNotExist(id)
-                ));
+            if (!await ChatRequestRules.#existMessage({"id": id}, self.messageRepository)) {
+                throw new Error(ErrorMessageGenerator.generateMessageNotExist(id));
             }
             return true;
-        }, true);
+        }, true, true);
     }
 
     /**
@@ -176,10 +187,13 @@ export class ChatRequestRules {
     async canGetListForUser(json) {
         let self = this;
         return await PromiseWrap.asyncWrap(async function() {
-            return await UserRequestRules.existUser(
+            if (!await UserRequestRules.existUser(
                 {"id": json["user"]}, self.userRepository
-            );
-        }, true);
+            )) {
+                throw new Error(ErrorMessageGenerator.generateUserNotExist({"id": json["user"]}));
+            }
+            return true;
+        }, true, true);
     }
 
     /**
@@ -189,10 +203,13 @@ export class ChatRequestRules {
     async canGetMessagesFromChat(json) {
         let self = this;
         return await PromiseWrap.asyncWrap(async function() {
-            return await ChatRequestRules.#existChat(
+            if (!await ChatRequestRules.#existChat(
                 {"id": json["chat"]}, self.chatRepository
-            );
-        }, true);
+            )) {
+                throw new Error(ErrorMessageGenerator.generateChatNotExist(json["chat"]));
+            }
+            return true;
+        }, true, true);
     }
 
     /**
@@ -204,6 +221,19 @@ export class ChatRequestRules {
         if (ChatRequestRules.#notEmpty(json["text"])) {
             return true;
         }
-        throw new Error(ErrorMessageGenerator.generateTrySendEmptyMessage());
+        throw new Error(ErrorMessageGenerator.generateTrySendEmptyMessage(json["author"]));
+    }
+
+    /**
+     * @param {Object} fields
+     * @param {MessageRepository} messageRepository
+     * @return {Promise<boolean>}
+     */
+    static #existMessage = async function (fields, messageRepository) {
+        return await PromiseWrap.asyncWrap(async function() {
+            /** @type {Chat} */
+            const chat = await messageRepository.find(fields);
+            return chat !== null;
+        }, true, true);
     }
 }

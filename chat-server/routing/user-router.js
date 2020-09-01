@@ -24,7 +24,7 @@ async function func() {
         }, true);
     });
 
-    userRouter.get('/delete', async function(req, res) {
+    userRouter.post('/delete', async function(req, res) {
         return await PromiseWrap.asyncWrap(async function() {
             await controller.delete(req, res);
         }, true);

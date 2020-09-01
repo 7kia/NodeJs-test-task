@@ -5,10 +5,11 @@ export class PromiseWrap {
      *
      * @param {Function} func
      * @param {boolean} wait
+     * @param {boolean} throwOut
      * @param {Function} errorHandler
      * @return {Promise<any>}
      */
-    static async asyncWrap(func, wait, errorHandler = null) {
+    static async asyncWrap(func, wait, throwOut = false, errorHandler = null) {
         return await new Promise(async (resolve, reject) => {
             try {
                 if (wait) {
@@ -21,7 +22,7 @@ export class PromiseWrap {
                     errorHandler(exception);
                 }
 
-                logger.error(exception);
+                logger.error(exception.message);
                 reject(exception);
             }
         });
@@ -36,12 +37,12 @@ export class PromiseWrap {
     static async asyncRouteSendWrap(func, req, res) {
         return await PromiseWrap.asyncWrap(async function() {
             try {
-                res.send(func());
+                await func();
             } catch (exception) {
                 res.status(500);
-                res.send(exception.message);
+                res.send({"errorMessage": exception.message});
             }
             res.end();
-        }, true);
+        }, true, true);
     }
 }

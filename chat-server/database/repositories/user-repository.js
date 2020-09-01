@@ -90,7 +90,6 @@ export class UserRepository extends Repository {
     }
 
     /**
-     *
      * @param {Object} searchParameters
      * @return {Promise<User|null>}
      */
