@@ -1,0 +1,14 @@
+.to-center {
+    text-align: center;
+}
+
+.horizontal-list {
+    display: block;
+    list-style-type: none;
+    padding: 0;
+    margin: 10px;
+}
+
+.inline {
+    display: inline-block;
+}
