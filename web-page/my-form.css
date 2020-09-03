@@ -11,7 +11,12 @@
     width: fit-content;
 }
 
+.my-form__input {
+    font-size: 18px;
+}
+
 .my-form__submit-button {
     margin-top: 0;
     margin-bottom: 10px;
+    font-size: 18px;
 }

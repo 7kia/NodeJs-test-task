@@ -12,3 +12,8 @@
 .inline {
     display: inline-block;
 }
+
+.m-lr-5 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
