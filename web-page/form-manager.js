@@ -51,6 +51,11 @@ class FormManager {
         }
         label.append(text);
     }
+
+    static setButtonNotActive() {
+        let fullNameLabel = $("#submitButton")[0];
+        fullNameLabel.disabled = true;
+    }
 }
 
 export {FormManager, FULL_NAME_INPUT, EMAIL_INPUT, PHONE_INPUT}

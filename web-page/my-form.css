@@ -12,6 +12,13 @@
     background-color: #e0e0e0;
 }
 
+.my-form__result-container {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 18px;
+    height: 21px;
+}
+
 .my-form__input {
     font-size: 18px;
 }
