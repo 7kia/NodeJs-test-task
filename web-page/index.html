@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="common.css">
+    <link rel="stylesheet" type="text/css" href="error.css">
     <link rel="stylesheet" type="text/css" href="page-container.css">
     <link rel="stylesheet" type="text/css" href="my-form.css">
     <script src="jquery-3.5.1.js"></script>
@@ -14,20 +15,26 @@
         <div class="my-form-container to-center">
             <form id="my-form" class="my-form inline">
                 <ul class="horizontal-list">
+                    <label name="my-form__full-name-label"
+                           class="error-text-style"></label>
                     <li class="my-form__input m-lr-5">
                         <input type="text" id="full-name" placeholder="Full name"
                                name="my-form__full-name" class="my-form__input">
                     </li>
+                    <label name="my-form__email-label"
+                           class="error-text-style"></label>
                     <li class="my-form__input m-lr-5">
                         <input type="text" id="email" placeholder="Email"
                                name="my-form__email" class="my-form__input">
                     </li>
+                    <label name="my-form__phone-label"
+                           class="error-text-style"></label>
                     <li class="my-form__input m-lr-5">
                         <input type="text" id="phone" placeholder="Phone"
                                name="my-form__phone" class="my-form__input">
                     </li>
                 </ul>
-                <button type="submit" class="my-form__submit-button">Submit</button>
+                <button type="submit" id="submitButton" class="my-form__submit-button">Submit</button>
             </form>
         </div>
     </div>

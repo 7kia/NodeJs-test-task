@@ -9,6 +9,7 @@
     border-radius: 4px;
     border-width: 1px;
     width: fit-content;
+    background-color: #e0e0e0;
 }
 
 .my-form__input {
