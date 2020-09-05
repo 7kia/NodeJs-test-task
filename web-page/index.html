@@ -2,44 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="common.css">
-    <link rel="stylesheet" type="text/css" href="error.css">
-    <link rel="stylesheet" type="text/css" href="page-container.css">
-    <link rel="stylesheet" type="text/css" href="my-form.css">
-    <script src="jquery-3.5.1.js"></script>
+    <link rel="stylesheet" type="text/css" href="my-form-container/my-form-container.css">
+    <link rel="stylesheet" type="text/css" href="my-form-container/my-form/error.css">
+    <link rel="stylesheet" type="text/css" href="my-form-container/my-form/my-form.css">
+    <script src="libs/jquery-3.5.1.js"></script>
     <script type="module" src="index.js"></script>
     <title>Title</title>
 </head>
 <body>
-    <div class="page-container">
-        <div class="my-form-container to-center">
-            <form id="my-form" class="my-form inline" action="index.html">
-                <div id="my-form__result-container" class="my-form__result-container"></div>
-                <ul class="horizontal-list">
-                    <label name="my-form__full-name-label"
-                           class="error-text-style"></label>
-                    <li class="my-form__input m-lr-5">
-                        <input type="text" id="full-name" placeholder="Full name"
-                               name="my-form__full-name" class="my-form__input">
-                    </li>
-                    <label name="my-form__email-label"
-                           class="error-text-style"></label>
-                    <li class="my-form__input m-lr-5">
-                        <input type="text" id="email" placeholder="Email"
-                               name="my-form__email" class="my-form__input">
-                    </li>
-                    <label name="my-form__phone-label"
-                           class="error-text-style"></label>
-                    <li class="my-form__input m-lr-5">
-                        <input type="text" id="phone" placeholder="Phone"
-                               name="my-form__phone" class="my-form__input">
-                    </li>
-                </ul>
-                <button id="submitButton" class="my-form__submit-button">
-                    Submit
-                </button>
-            </form>
-        </div>
+    <div class="my-form-container to-center">
+        <form id="my-form" class="my-form-container__my-form inline" action="index.html">
+            <div id="my-form__result-container" class="my-form__result-container"></div>
+            <ul class="horizontal-list">
+                <label name="my-form__full-name-label"
+                       class="error-text-style"></label>
+                <li class="my-form__input m-lr-5">
+                    <input type="text" id="full-name" placeholder="Full name"
+                           name="my-form__full-name" class="my-form__input">
+                </li>
+                <label name="my-form__email-label"
+                       class="error-text-style"></label>
+                <li class="my-form__input m-lr-5">
+                    <input type="text" id="email" placeholder="Email"
+                           name="my-form__email" class="my-form__input">
+                </li>
+                <label name="my-form__phone-label"
+                       class="error-text-style"></label>
+                <li class="my-form__input m-lr-5">
+                    <input type="text" id="phone" placeholder="Phone"
+                           name="my-form__phone" class="my-form__input">
+                </li>
+            </ul>
+            <button id="submitButton" class="my-form__submit-button">
+                Submit
+            </button>
+        </form>
     </div>
 </body>
 </html>

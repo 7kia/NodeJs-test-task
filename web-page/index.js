@@ -1,6 +1,6 @@
-import {EMAIL_INPUT, FormManager, PHONE_INPUT} from "./form-manager.js";
-import {MyFormResultHandler} from "./my-form-result-handler.js";
-import {FULL_NAME_INPUT} from "./form-manager.js";
+import {EMAIL_INPUT, FormManager, PHONE_INPUT} from "./js/form-manager.js";
+import {MyFormResultHandler} from "./js/my-form-result-handler.js";
+import {FULL_NAME_INPUT} from "./js/form-manager.js";
 
 /**
  *
