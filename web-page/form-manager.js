@@ -56,6 +56,15 @@ class FormManager {
         let fullNameLabel = $("#submitButton")[0];
         fullNameLabel.disabled = true;
     }
+
+    static setInputsDisable(value) {
+        let fullNameInput = $("input[name=\"" + FULL_NAME_INPUT + "\"]")[0];
+        fullNameInput.disabled = value;
+        let emailInput =$("input[name=\"" + EMAIL_INPUT + "\"]")[0];
+        emailInput.disabled = value;
+        let phoneInput = $("input[name=\"" + PHONE_INPUT + "\"]")[0];
+        phoneInput.disabled = value;
+    }
 }
 
 export {FormManager, FULL_NAME_INPUT, EMAIL_INPUT, PHONE_INPUT}

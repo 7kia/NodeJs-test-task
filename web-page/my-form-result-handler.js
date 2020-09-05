@@ -1,31 +1,44 @@
 import {EMAIL_INPUT, FormManager, FULL_NAME_INPUT} from "./form-manager.js";
-import {FormValidater} from "./form-validater.js";
+import {FormValidator} from "./form-validator.js";
 import {PromiseWrap} from "./promise-wrap.js";
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/** @type {string} */
+const ERROR_CLASS = "my-form__result-container_error";
+/** @type {string} */
+const PROGRESS_CLASS = "my-form__result-container_progress";
+/** @type {string} */
+const SUCCESS_CLASS = "my-form__result-container_success";
+
 /**
  * Имя FormResultHandler конфликтует с именем из Express
  */
 export class MyFormResultHandler {
+    constructor() {
+        /** @private {FormValidator} */
+        this.formValidator = new FormValidator();
+    }
     /**
      * @param {Object} query
      * @return {Promise<boolean>} true - repeat send, false - not repeat
      */
-    static async handle(query) {
+    async handle(query) {
+        let self = this;
         return await PromiseWrap.asyncWrap(async () => {
             /** @type {Object} */
-            const validateResult = FormValidater.validate(query);
+            const validateResult = self.formValidator.validate(query);
 
             /** @type {string} */
             let requestResult = "";
-            if (!validateResult.isValid) {
+            if (validateResult.isValid) {
                 FormManager.setButtonNotActive();
-                if (query[EMAIL_INPUT] === "e%40e.com") {
+                FormManager.setInputsDisable(true);
+                if (query[EMAIL_INPUT] === "e@e.com") {
                     requestResult = MyFormResultHandler.#extractJsonFrom("ajax-request/error.json");
-                } else if (query[FULL_NAME_INPUT] === "progress+1+1") {
+                } else if (query[FULL_NAME_INPUT] === "progress 1 1") {
                     requestResult = MyFormResultHandler.#extractJsonFrom("ajax-request/progress.json");
                 } else {
                     requestResult = MyFormResultHandler.#extractJsonFrom("ajax-request/success.json");
@@ -64,12 +77,15 @@ export class MyFormResultHandler {
 
             if(json["status"] === "error") {
                 resultContainer.append(json["reason"]);
+                resultContainer.classList.add(ERROR_CLASS);
             } else if (json["status"] === "progress") {
                 resultContainer.append("Loading...");
+                resultContainer.classList.add(PROGRESS_CLASS);
                 await sleep(2000);
                 return true;
             } else {
                 resultContainer.append("Success");
+                resultContainer.classList.add(SUCCESS_CLASS);
             }
             return false;
         }, true);
@@ -81,5 +97,8 @@ export class MyFormResultHandler {
         if (childes.length) {
             childes[0].remove();
         }
+        resultContainer.classList.remove(ERROR_CLASS);
+        resultContainer.classList.remove(SUCCESS_CLASS);
+        resultContainer.classList.remove(PROGRESS_CLASS);
     }
 }

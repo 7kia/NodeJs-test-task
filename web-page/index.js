@@ -9,31 +9,29 @@ import {FULL_NAME_INPUT} from "./form-manager.js";
 function getUrlVars()
 {
     let vars = {};
-    const hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-    for(let i = 0; i < hashes.length; i++)
+    const paramsString = window.location.href.slice(window.location.href.indexOf('?') + 1);
+    const searchParams = new URLSearchParams(paramsString);
+    for(let param of searchParams)
     {
-        const hash = hashes[i].split('=');
-        vars[hash[0]] = hash[1];
+        vars[param[0]] = param[1];
     }
     return vars;
 }
 
 $(document).ready(async function() {
+    /** @type {MyFormResultHandler} */
+    const myFormResultHandler = new MyFormResultHandler();
     /** @type {Object} */
     const query = getUrlVars();
+
     /** @type {boolean} */
     const isFormRequest = query.hasOwnProperty(FULL_NAME_INPUT)
         && query.hasOwnProperty(EMAIL_INPUT)
         && query.hasOwnProperty(PHONE_INPUT);
     if (isFormRequest) {
         FormManager.setFormData(query);
-        if (await MyFormResultHandler.handle(query)) {
-            let resultContainer = $("#my-form")[0];
-            resultContainer.submit();
+        if (await myFormResultHandler.handle(query)) {
+            window.location.reload(true);
         }
     }
-
-    $("#submitButton").click(function() {
-
-    });
 });
