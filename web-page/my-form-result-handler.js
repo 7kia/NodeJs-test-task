@@ -18,7 +18,6 @@ export class MyFormResultHandler {
         return await PromiseWrap.asyncWrap(async () => {
             /** @type {Object} */
             const validateResult = FormValidater.validate(query);
-            FormManager.setErrorMessages(validateResult["errorFields"]);
 
             /** @type {string} */
             let requestResult = "";
@@ -33,6 +32,7 @@ export class MyFormResultHandler {
                 }
                 return await MyFormResultHandler.#fillResultContainer(requestResult);
             }
+            FormManager.setErrorMessages(validateResult["errorFields"]);
             return false;
         }, true);
     }
