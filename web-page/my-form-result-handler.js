@@ -81,7 +81,7 @@ export class MyFormResultHandler {
             } else if (json["status"] === "progress") {
                 resultContainer.append("Loading...");
                 resultContainer.classList.add(PROGRESS_CLASS);
-                await sleep(2000);
+                await sleep(parseInt(json["timeout"]));
                 return true;
             } else {
                 resultContainer.append("Success");
