@@ -2,14 +2,20 @@ import {expect} from 'chai';
 import {DomainCoreBuilder} from "../../chat-server/domain-core/domain-core-builder";
 import {DatabaseManagerBuilderDirector} from "../../chat-server/database/database-manager-builder-director";
 
-describe("Класс DomainCoreBuilder.", () => {
-    /** @type {DomainCoreBuilder} */
-    const builder = new DomainCoreBuilder(new DatabaseManagerBuilderDirector().createDatabaseManager());
+describe("Класс DomainCoreBuilder.", async () => {
+    before(async () => {
+        /** @type {DatabaseManagerBuilderDirector} */
+        const databaseManagerDirector = new DatabaseManagerBuilderDirector();
+        /** @private {DomainCoreBuilder} */
+        this.builder = new DomainCoreBuilder(
+            await databaseManagerDirector.createDatabaseManager()
+        );
+    })
     describe("Создает Rules.", () => {
         describe("Создает UserRequestRules.", () => {
             it("UserRequestRules содержит в себе UserDatabaseManager", () => {
                 /** @type {UserRequestRules} */
-                const rules = builder.createUserRules();
+                const rules = this.builder.createUserRules();
                 expect(rules).is.not.null;
                 expect(rules).have.property("userRepository");
             })
@@ -17,7 +23,7 @@ describe("Класс DomainCoreBuilder.", () => {
         describe("Создает ChatRequestRules.", () => {
             it("ChatAggregate содержит в себе ChatRepository и MessageRepository", () => {
                 /** @type {ChatRequestRules} */
-                const rules = builder.createChatRules();
+                const rules = this.builder.createChatRules();
                 expect(rules).is.not.null;
                 expect(rules).have.property("chatRepository");
                 expect(rules).have.property("messageRepository");
@@ -25,11 +31,11 @@ describe("Класс DomainCoreBuilder.", () => {
         })
         it("UserRequestRules содержит в себе UserRequestRules и ChatRequestRules", () => {
             /** @type {UserRequestRules} */
-            const userRules = builder.createUserRules();
+            const userRules = this.builder.createUserRules();
             /** @type {ChatRequestRules} */
-            const chatRules = builder.createChatRules();
+            const chatRules = this.builder.createChatRules();
             /** @type {Rules} */
-            const rules = builder.createRules(userRules, chatRules);
+            const rules = this.builder.createRules(userRules, chatRules);
 
             expect(rules).is.not.null;
             expect(rules).have.property("userRequestRules");
@@ -40,7 +46,7 @@ describe("Класс DomainCoreBuilder.", () => {
         describe("Создает UserRequestStrategies.", () => {
             it("UserRequestStrategies содержит в себе UserRepository", () => {
                 /** @type {UserRequestStrategies} */
-                const strategies = builder.createUserStrategies();
+                const strategies = this.builder.createUserStrategies();
                 expect(strategies).is.not.null;
                 expect(strategies).have.property("userRepository");
             })
@@ -48,7 +54,7 @@ describe("Класс DomainCoreBuilder.", () => {
         describe("Создает ChatRequestStrategies.", () => {
             it("ChatRequestStrategies содержит в себе ChatRepository и MessageRepository", () => {
                 /** @type {ChatRequestStrategies} */
-                const strategies = builder.createChatStrategies();
+                const strategies = this.builder.createChatStrategies();
                 expect(strategies).is.not.null;
                 expect(strategies).have.property("chatRepository");
                 expect(strategies).have.property("messageRepository");
@@ -56,11 +62,11 @@ describe("Класс DomainCoreBuilder.", () => {
         })
         it("Strategies содержит в себе UserRequestStrategies и ChatRequestStrategies", () => {
             /** @type {UserRequestStrategies} */
-            const userStrategies = builder.createUserStrategies();
+            const userStrategies = this.builder.createUserStrategies();
             /** @type {ChatRequestStrategies} */
-            const chatStrategies = builder.createChatStrategies();
+            const chatStrategies = this.builder.createChatStrategies();
             /** @type {Strategies} */
-            const strategies = builder.createStrategies(userStrategies, chatStrategies);
+            const strategies = this.builder.createStrategies(userStrategies, chatStrategies);
 
             expect(strategies).is.not.null;
             expect(strategies).have.property("userRequestStrategies");
@@ -69,21 +75,21 @@ describe("Класс DomainCoreBuilder.", () => {
     })
     it("Собирает DomainCore из Rules и Strategies", () => {
         /** @type {UserRequestStrategies} */
-        const userStrategies = builder.createUserStrategies();
+        const userStrategies = this.builder.createUserStrategies();
         /** @type {ChatRequestStrategies} */
-        const chatStrategies = builder.createChatStrategies();
+        const chatStrategies = this.builder.createChatStrategies();
         /** @type {Strategies} */
-        const strategies = builder.createStrategies(userStrategies, chatStrategies);
+        const strategies = this.builder.createStrategies(userStrategies, chatStrategies);
 
         /** @type {UserRequestRules} */
-        const userRules = builder.createUserRules();
+        const userRules = this.builder.createUserRules();
         /** @type {ChatRequestRules} */
-        const chatRules = builder.createChatRules();
+        const chatRules = this.builder.createChatRules();
         /** @type {Rules} */
-        const rules = builder.createRules(userRules, chatRules);
+        const rules = this.builder.createRules(userRules, chatRules);
 
         /** @type {DomainCore} */
-        const core = builder.buildDomainCore(rules, strategies);
+        const core = this.builder.buildDomainCore(rules, strategies);
 
         expect(core).is.not.null;
         expect(core).have.property("rules");

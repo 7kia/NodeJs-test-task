@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {ErrorMessageGenerator} from "../../chat-server/helper-modules/error-message-generator";
+import {ErrorMessageGenerator} from "../../chat-server/helper-modules/error-message-generator.js";
 
 describe("Класс ErrorMessageGenerator. Генерирует сообщения.", () => {
     describe("Для исключений:", () => {
