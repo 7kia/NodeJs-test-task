@@ -12,6 +12,17 @@ describe("Класс ServerApiController. Генерирует REST-ответы
     const SERVER_ADDRESS = "http://localhost:9000/";
 
     /**
+     *
+     * @param {string} text
+     * @return {string}
+     */
+    function fixDoubleQuotes(text) {
+        /** @type {string} */
+        let result = text.split('\"').join("");
+        result = result.split('\\').join("");
+        return result;
+    }
+    /**
      * @param {string} url
      * @param {Object} sendData
      * @return {Promise<request.Response>}
@@ -30,7 +41,7 @@ describe("Класс ServerApiController. Генерирует REST-ответы
      * @return {string}
      */
     function generateErrorMessage(message) {
-        return sprintf('{"errorMessage":"%s"}', message);
+        return sprintf('{errorMessage:%s}', message);
     }
 
     /**
@@ -96,7 +107,7 @@ describe("Класс ServerApiController. Генерирует REST-ответы
             );
             expect(response.error).is.instanceOf(Error);
             expect(response.error.status).is.eq(500);
-            expect(response.error.text).is.eq(
+            expect(fixDoubleQuotes(response.error.text)).is.eq(
                 generateErrorMessage(sprintf("User with name %s exist", USER_NAME))
             );
             await deleteUser(USER_NAME);
@@ -131,8 +142,8 @@ describe("Класс ServerApiController. Генерирует REST-ответы
             );
             expect(response.error).is.instanceOf(Error);
             expect(response.error.status).is.eq(500);
-            expect(response.error.text).is.eq(
-                generateErrorMessage(sprintf("User with {\"username\":"+ USER_NAME+"} not exist", USER_NAME))
+            expect(fixDoubleQuotes(response.error.text)).is.eq(
+                generateErrorMessage(sprintf('User with {username:%s} not exist', USER_NAME))
             );
         })
     })
@@ -197,7 +208,7 @@ describe("Класс ServerApiController. Генерирует REST-ответы
                     }
                 );
                 expect(response.error).is.eq(false);
-                
+
                 expect(response.status).is.eq(200);
                 expect(response.body).is.an("Object");
                 expect(response.body.id).is.a("number").is.greaterThan(0);
@@ -206,8 +217,10 @@ describe("Класс ServerApiController. Генерирует REST-ответы
         })
         describe("Чат не создается и возвращается сообщение с ошибкой, если", async () => {
             before(async () => {
+                /** @type {string} */
+                this.USER_NAME_3 = "test3";
                 /** @type {number} */
-                this.USER_ID_3 = await addUser("test3");
+                this.USER_ID_3 = await addUser(this.USER_NAME_3);
                 /** @type {string} */
                 this.CHAT_NAME_2 = "testChat2";
                 /** @type {Array<number>} */
@@ -226,7 +239,7 @@ describe("Класс ServerApiController. Генерирует REST-ответы
                 );
                 expect(response.error).is.instanceOf(Error);
                 expect(response.error.status).is.eq(500);
-                expect(response.error.text).is.eq(
+                expect(fixDoubleQuotes(response.error.text)).is.eq(
                     generateErrorMessage(
                         sprintf("Users [%i] not exist", NOT_EXIST_USER)
                     )
@@ -244,8 +257,8 @@ describe("Класс ServerApiController. Генерирует REST-ответы
                 );
                 expect(response.error).is.instanceOf(Error);
                 expect(response.error.status).is.eq(500);
-                expect(response.error.text).is.eq(
-                    generateErrorMessage(sprintf("Chat with {\"users\":%j} exist", this.USERS))
+                expect(fixDoubleQuotes(response.error.text)).is.eq(
+                    generateErrorMessage(sprintf("Chat with {users:%j} exist", this.USERS))
                 );
 
                 await deleteChat(chatId);
@@ -260,11 +273,13 @@ describe("Класс ServerApiController. Генерирует REST-ответы
                 );
                 expect(response.error).is.instanceOf(Error);
                 expect(response.error.status).is.eq(500);
-                expect(response.error.text).is.eq(
+                expect(fixDoubleQuotes(response.error.text)).is.eq(
                     generateErrorMessage("Chat name is empty")
                 );
             })
-
+            after(async () => {
+                await deleteUser(this.USER_NAME_3);
+            });
         })
 
         after(async () => {
@@ -326,7 +341,7 @@ describe("Класс ServerApiController. Генерирует REST-ответы
                 );
                 expect(response.error).is.instanceOf(Error);
                 expect(response.error.status).is.eq(500);
-                expect(response.error.text).is.eq(
+                expect(fixDoubleQuotes(response.error.text)).is.eq(
                     generateErrorMessage(sprintf(
                         "Chat with id %i not exist", NOT_EXIST_CHAT_ID
                     ))
@@ -342,10 +357,10 @@ describe("Класс ServerApiController. Генерирует REST-ответы
                 );
                 expect(response.error).is.instanceOf(Error);
                 expect(response.error.status).is.eq(500);
-                expect(response.error.text).is.eq(
+                expect(fixDoubleQuotes(response.error.text)).is.eq(
                     generateErrorMessage(
                         sprintf(
-                        "User with {\"id\":%i}  not exist", NOT_EXIST_USER
+                        "User with {id:%i} not exist", NOT_EXIST_USER
                     ))
                 );
             })
@@ -359,7 +374,7 @@ describe("Класс ServerApiController. Генерирует REST-ответы
                 );
                 expect(response.error).is.instanceOf(Error);
                 expect(response.error.status).is.eq(500);
-                expect(response.error.text).is.eq(
+                expect(fixDoubleQuotes(response.error.text)).is.eq(
                     generateErrorMessage(sprintf(
                         "User with id %i try send empty message", this.USER_ID
                     ))
@@ -443,9 +458,9 @@ describe("Класс ServerApiController. Генерирует REST-ответы
                 );
                 expect(response.error).is.instanceOf(Error);
                 expect(response.error.status).is.eq(500);
-                expect(response.error.text).is.eq(
+                expect(fixDoubleQuotes(response.error.text)).is.eq(
                     generateErrorMessage(sprintf(
-                        "User with {\"id\":%i} not exist", NOT_EXIST_USER
+                        "User with {id:%i} not exist", NOT_EXIST_USER
                     ))
                 );
             })
@@ -572,7 +587,7 @@ describe("Класс ServerApiController. Генерирует REST-ответы
                 );
                 expect(response.error).is.instanceOf(Error);
                 expect(response.error.status).is.eq(500);
-                expect(response.error.text).is.eq(
+                expect(fixDoubleQuotes(response.error.text)).is.eq(
                     generateErrorMessage(sprintf(
                         "Chat with id %i not exist", NOT_EXIST_CHAT
                     ))
