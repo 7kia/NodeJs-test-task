@@ -139,18 +139,18 @@ export class Repository {
         data,
         returnId = false
     ) {
-            const valueString = Repository.generateValueString(data);
-            const propertyString = Repository.generatePropertyString(data);
+        const valueString = Repository.generateValueString(data);
+        const propertyString = Repository.generatePropertyString(data);
 
-            /** @type {string} */
-            let result = "INSERT INTO public.\"" + insertPlace + "\"("
-                + propertyString + ")"
-                + "VALUES (" + valueString + ")";
+        /** @type {string} */
+        let result = "INSERT INTO public.\"" + insertPlace + "\"("
+            + propertyString + ")"
+            + "VALUES (" + valueString + ")";
 
-            if (returnId) {
-                result += " RETURNING id";
-            }
-            return result
+        if (returnId) {
+            result += " RETURNING id";
+        }
+        return result
     }
     /**
      * @param {Object} data
