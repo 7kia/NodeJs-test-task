@@ -6,39 +6,28 @@ import {ChatMessage} from "../../../chat-server/database/entity/chat-message";
 chai.use(require("chai-as-promised"));
 
 describe("Класс MessageRepository. Отвечает за извлечение и внесение данных " +
-    "в таблицу Message.", async () => {
-    /** @type {Client} */
-    const connection = new DatabaseManagerBuilder().createConnection();
-    /** @type {MessageRepository} */
-    const messageRepository = new RepositoriesFactory().createMessageRepository(connection);
+    "в таблицу Message.", () => {
+    before(() => {
+        /** @type {Client} */
+        const connection = new DatabaseManagerBuilder().createConnection();
+        /** @private {MessageRepository} */
+        this.messageRepository = new RepositoriesFactory().createMessageRepository(connection);
+    })
     it("Создает таблицу, если её нет.", async () => {
-        expect(async () => {await messageRepository.createTableIfNotExist()}).to.not.throw();
+        expect(async () => {await this.messageRepository.createTableIfNotExist()}).to.not.throw();
     })
 
     describe("Может добавить сообщение в чат", () => {
-        /** @type {number} */
-        const chatId = 4;
-        /** @type {number} */
-        const authorId = 1;
-        /** @type {string} */
-        const message = "msg1";
-        /** @type {number} */
-        let messageId = -1;
         it("Если указан id чата, id автора и текст сообщения, то возвращает его id.", async () => {
-            messageId = await messageRepository.add(chatId, authorId, message);
+            /** @type {number} */
+            const chatId = 4;
+            /** @type {number} */
+            const authorId = 1;
+            /** @type {string} */
+            const message = "msg1";
+            /** @type {number} */
+            const messageId = await this.messageRepository.add(chatId, authorId, message);
             expect(messageId).is.a("number").is.greaterThan(0);
-        })
-        it("Если не удалось, то бросает исключение.", async () => {
-            try {
-                const func = async () => {
-                    await messageRepository.add(chatId, authorId, message);
-                };
-                await expect(func()).to.be.rejectedWith(Error);
-            } catch (exception) {
-                console.error(exception);
-            } finally {
-                await messageRepository.delete(messageId);
-            }
         })
     })
     describe("Может удалить сообщение с указанным id", () => {
@@ -50,15 +39,15 @@ describe("Класс MessageRepository. Отвечает за извлечени
             /** @type {string} */
             const message = "msg2";
             /** @type {number} */
-            let messageId = await messageRepository.add(chatId, authorId, message);
-            expect(await messageRepository.delete(messageId))
+            let messageId = await this.messageRepository.add(chatId, authorId, message);
+            expect(await this.messageRepository.delete(messageId))
                 .is.a("boolean")
                 .is.eq(true);
         })
         it("Если не удалось, то бросает исключение.", async () => {
             /** @type {Function} */
             const func = async () => {
-                await messageRepository.delete(-1);
+                await this.messageRepository.delete(-1);
             };
             await expect(func()).to.be.rejectedWith(Error);
         })
@@ -71,13 +60,16 @@ describe("Класс MessageRepository. Отвечает за извлечени
             /** @type {number} */
             const authorId = 4;
             /** @type {number} */
-            const messageId1 = await messageRepository.add(chatId, authorId, "message1");
+            const messageId1 = await this.messageRepository.add(chatId, authorId, "message1");
             /** @type {number} */
-            const messageId2 = await messageRepository.add(chatId, authorId, "message2");
+            const messageId2 = await this.messageRepository.add(chatId, authorId, "message2");
             /** @type {number} */
             const messageAmount = 2;
             /** @type {Array<ChatMessage>} */
-            const messages = await messageRepository.getMessages(chatId);
+            const messages = await this.messageRepository.getMessages(chatId);
+            await this.messageRepository.delete(messageId1);
+            await this.messageRepository.delete(messageId2);
+
             expect(messages).to.be.a("Array").have.length(messageAmount);
             for (let i = 0; i < messageAmount; i++) {
                 expect(messages[i]).is.instanceOf(ChatMessage);
@@ -86,9 +78,6 @@ describe("Класс MessageRepository. Отвечает за извлечени
                     expect(messages[i].createdAt.getTime()).is.least(messages[i - 1].createdAt.getTime());
                 }
             }
-
-            await messageRepository.delete(messageId1);
-            await messageRepository.delete(messageId2);
         })
     })
 })

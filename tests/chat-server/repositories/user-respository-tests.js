@@ -7,51 +7,47 @@ chai.use(require("chai-as-promised"));
 
 describe("Класс UserRepository. Отвечает за извлечение и внесение данных " +
     "в таблицу User.", () => {
-    /** @type {Client} */
-    const connection = new DatabaseManagerBuilder().createConnection();
-    /** @type {UserRepository} */
-    const repository = new RepositoriesFactory().createUserRepository(connection);
+    before(() => {
+        /** @type {Client} */
+        const connection = new DatabaseManagerBuilder().createConnection();
+        /** @private {UserRepository} */
+        this.repository = new RepositoriesFactory().createUserRepository(connection);
+    })
     it("Создает таблицу, если её нет.", async () => {
-        expect(async () => {await repository.createTableIfNotExist()}).to.not.throw();
+        expect(async () => {await this.repository.createTableIfNotExist()}).to.not.throw();
     })
     /**
      * Созданный пользователь удаляется в следующем тесте, в тесте на удаление
      */
     describe("Может добавить пользователя с указанным именем", () => {
-        /** @type {string} */
-        const userName = "UserRepositoryAddTest";
+        before(() => {
+            /** @private {string} */
+            this.userName = "UserRepositoryAddTest";
+        })
         it("Если пользователь добавлен успешно, то возвращает " +
             "его id.", async () => {
-            expect(await repository.add(userName))
+            expect(await this.repository.add(this.userName))
                 .is.a("number")
                 .is.greaterThan(0);
         })
-        it("Если не удалось, то бросает исключение.", async () => {
-            try {
-                const func = async () => {
-                    await repository.add(userName);
-                };
-                await expect(func()).to.be.rejectedWith(Error);
-            } catch (exception) {
-                console.error(exception);
-            } finally {
-                await repository.delete(userName);
-            }
+
+        after(async () => {
+            await this.repository.delete(this.userName);
         })
     })
     describe("Может удалить пользователя с указанным именем", () => {
         it("Если успешно, то возвращает true.", async () => {
             /** @type {string} */
             const userName = "UserRepositoryAddTest2";
-            await repository.add(userName);
-            expect(await repository.delete(userName))
+            await this.repository.add(userName);
+            expect(await this.repository.delete(userName))
                 .is.a("boolean")
                 .is.eq(true);
         })
         it("Если не удалось, то бросает исключение.", async () => {
             /** @type {Function} */
             const func = async () => {
-                await repository.delete(userName);
+                await this.repository.delete("");
             };
             await expect(func()).to.be.rejectedWith(Error);
         })
@@ -61,18 +57,18 @@ describe("Класс UserRepository. Отвечает за извлечение 
             /** @type {string} */
             const userName = "UserRepositoryAddTest3";
             /** @type {number} */
-            const userId = await repository.add(userName);
+            const userId = await this.repository.add(userName);
 
             /** @type {User} */
-            const user = await repository.find({"userName": userName, "id": userId});
+            const user = await this.repository.find({"userName": userName, "id": userId});
+            await this.repository.delete(userName);
+
             expect(user).is.instanceOf(User);
             expect(user.id).is.eq(userId);
             expect(user.username).is.eq(userName);
-
-            await repository.delete(userName);
         })
         it("Если не удалось, то null.", async () => {
-            await expect(await repository.find({"userName": null}))
+            await expect(await this.repository.find({"userName": null}))
                 .to.be.null;
         })
     })
