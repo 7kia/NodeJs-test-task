@@ -29,10 +29,10 @@ export class UserRepository extends Repository {
                 await self.connection.query(
                     "CREATE TABLE public.\"User\"\n" +
                     "(\n" +
-                    "    id integer NOT NULL DEFAULT nextval('\"User_id_seq\"'::regclass),\n" +
-                    "    username \"char\"[],\n" +
+                    "    id SERIAL,\n" +
+                    "    username text,\n" +
                     "    \"created_at\" date,\n" +
-                    "    CONSTRAINT \"User_pkey\" PRIMARY KEY (id)\n" +
+                    "    CONSTRAINT \"user_pkey\" PRIMARY KEY (id)\n" +
                     ")\n" +
                     "\n" +
                     "TABLESPACE pg_default;\n" +

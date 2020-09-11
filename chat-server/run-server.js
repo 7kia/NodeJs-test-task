@@ -8,7 +8,10 @@ app.use(bodyParser.json());
 app.use("/chats", chatRouter);
 app.use("/users", userRouter);
 
-const port = 9000;
+/** @type {boolean} */
+const isProduction = (process.env.NODE_ENV === 'production');
+/** @type {number} */
+const port = isProduction ? 9000 : 9001;
 app.listen(port, () => {
     console.log(`Chat server listening at http://localhost:${port}`);
 })

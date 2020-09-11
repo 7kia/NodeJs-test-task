@@ -6,15 +6,15 @@ export class MyConnection {
     static postgreConnection = null;
 
     /**
-     *
+     * @param {boolean} isProductionMode
      * @return {Client}
      */
-    static create() {
+    static create(isProductionMode) {
         if (!MyConnection.postgreConnection) {
             MyConnection.postgreConnection = new Client({
                 host: "localhost",
                 port: 5432,
-                database: "ChatServer",
+                database: isProductionMode ? "ChatServer" : "ChatServerTest",
                 user: "postgres",
                 password: "1",
             })

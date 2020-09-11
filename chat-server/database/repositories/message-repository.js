@@ -30,12 +30,12 @@ export class MessageRepository extends Repository {
                 await self.connection.query(
                     "CREATE TABLE public.\"Message\"\n" +
                     "(\n" +
-                    "    id integer NOT NULL DEFAULT nextval('\"User_id_seq\"'::regclass),\n" +
+                    "    id SERIAL,\n" +
                     "    chat integer,\n" +
                     "    author integer,\n" +
-                    "    text \"char\"[],\n" +
+                    "    text text,\n" +
                     "    \"created_at\" date,\n" +
-                    "    CONSTRAINT \"Message_pkey\" PRIMARY KEY (id)\n" +
+                    "    CONSTRAINT \"message_pkey\" PRIMARY KEY (id)\n" +
                     ")\n" +
                     "\n" +
                     "TABLESPACE pg_default;\n" +

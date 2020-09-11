@@ -30,11 +30,11 @@ export class ChatRepository extends Repository {
                 await self.connection.query(
                     "CREATE TABLE public.\"Chat\"\n" +
                     "(\n" +
-                    "    id integer NOT NULL DEFAULT nextval('\"User_id_seq\"'::regclass),\n" +
-                    "    name \"char\"[],\n" +
+                    "    id SERIAL,\n" +
+                    "    name text,\n" +
                     "    users integer[],\n" +
                     "    \"created_at\" date,\n" +
-                    "    CONSTRAINT \"Chat_pkey\" PRIMARY KEY (id)\n" +
+                    "    CONSTRAINT \"chat_pkey\" PRIMARY KEY (id)\n" +
                     ")\n" +
                     "\n" +
                     "TABLESPACE pg_default;\n" +

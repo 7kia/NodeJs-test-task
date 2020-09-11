@@ -10,7 +10,9 @@ async function func() {
     /** @type {DatabaseManagerBuilderDirector} */
     const databaseManagerBuilderDirector = new DatabaseManagerBuilderDirector();
     /** @type {DatabaseManager} */
-    const databaseManager = await databaseManagerBuilderDirector.createDatabaseManager();
+    const databaseManager = await databaseManagerBuilderDirector.createDatabaseManager(
+        process.env.NODE_ENV === 'production'
+    );
     /** @type {ChatServerBuilderDirector} */
     const chatServerBuilderDirector = new ChatServerBuilderDirector(
         databaseManager

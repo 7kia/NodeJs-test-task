@@ -11,10 +11,11 @@ export class DatabaseManagerBuilder {
     }
 
     /**
+     * @param {boolean} isProductionMode
      * @return {Client}
      */
-    createConnection() {
-        return MyConnection.create();
+    createConnection(isProductionMode = false) {
+        return MyConnection.create(isProductionMode);
     }
 
     /**
