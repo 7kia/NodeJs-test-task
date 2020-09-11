@@ -7,11 +7,12 @@ chai.use(require("chai-as-promised"));
 
 describe("Класс UserRepository. Отвечает за извлечение и внесение данных " +
     "в таблицу User.", () => {
-    before(() => {
+    before(async () => {
         /** @type {Client} */
         const connection = new DatabaseManagerBuilder().createConnection();
         /** @private {UserRepository} */
         this.repository = new RepositoriesFactory().createUserRepository(connection);
+        await this.repository.createTableIfNotExist();
     })
     it("Создает таблицу, если её нет.", async () => {
         expect(async () => {await this.repository.createTableIfNotExist()}).to.not.throw();

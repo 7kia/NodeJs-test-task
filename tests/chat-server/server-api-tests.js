@@ -9,10 +9,9 @@ const should = shouldFunc();
 
 describe("Класс ServerApiController. Генерирует REST-ответы чат сервера.", () => {
     /** @type {string} */
-    const SERVER_ADDRESS = "http://localhost:9000/";
+    const SERVER_ADDRESS = "http://localhost:9001/";
 
     /**
-     *
      * @param {string} text
      * @return {string}
      */

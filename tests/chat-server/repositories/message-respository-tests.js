@@ -7,11 +7,12 @@ chai.use(require("chai-as-promised"));
 
 describe("Класс MessageRepository. Отвечает за извлечение и внесение данных " +
     "в таблицу Message.", () => {
-    before(() => {
+    before(async () => {
         /** @type {Client} */
         const connection = new DatabaseManagerBuilder().createConnection();
         /** @private {MessageRepository} */
         this.messageRepository = new RepositoriesFactory().createMessageRepository(connection);
+        await this.messageRepository.createTableIfNotExist();
     })
     it("Создает таблицу, если её нет.", async () => {
         expect(async () => {await this.messageRepository.createTableIfNotExist()}).to.not.throw();

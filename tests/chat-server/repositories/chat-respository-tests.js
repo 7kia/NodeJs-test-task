@@ -7,11 +7,12 @@ chai.use(require("chai-as-promised"));
 
 describe("Класс ChatRepository. Отвечает за извлечение и внесение данных " +
     "в таблицу Chat.", () => {
-    before(() => {
+    before(async () => {
         /** @type {Client} */
         const connection = new DatabaseManagerBuilder().createConnection();
         /** @private {ChatRepository} */
         this.chatRepository = new RepositoriesFactory().createChatRepository(connection);
+        await this.chatRepository.createTableIfNotExist();
         /** @private {string} */
         this.chatName = "ChatTest1";
         /** @private {Array<number>}  */
